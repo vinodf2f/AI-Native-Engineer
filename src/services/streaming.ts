@@ -36,6 +36,10 @@ export async function streamChatCompletion(
   }
 
   const reader = res.body?.getReader()
+  if (!reader) {
+    cb.onError('Response body is not readable')
+    return
+  }
   const decoder = new TextDecoder()
   let full = ''
   let buffer = ''

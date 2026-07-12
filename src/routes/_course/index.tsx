@@ -113,7 +113,7 @@ function HomePage() {
                   <p className="text-[11px] text-zinc-600 mt-1.5">{p.detail}</p>
                   {p.concept ? (
                     <Link
-                      to={`/concept/${p.concept}`}
+                      to={`/concept/${p.concept}` as any}
                       className="inline-block mt-2 text-[11px] text-emerald-400 hover:text-emerald-300"
                     >
                       → {p.label}
@@ -149,10 +149,10 @@ function HomePage() {
       >
         <h2 className="text-sm font-semibold text-zinc-300 mb-4">All Basics lessons</h2>
         <div className="space-y-2">
-          {CONCEPTS.map((c, i) => (
+          {CONCEPTS.map((c: typeof CONCEPTS[number], i: number) => (
             <Link
               key={c.id}
-              to={`/concept/${c.id}`}
+              to={`/concept/${c.id}` as any}
               className="flex items-center gap-4 rounded-lg border border-zinc-800 bg-zinc-900/50 px-4 py-3 hover:border-zinc-700 hover:bg-zinc-900 transition-colors"
             >
               <span className="font-mono text-lg font-light text-zinc-700 w-6">{i + 1}</span>

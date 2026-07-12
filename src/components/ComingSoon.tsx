@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { Link } from '@tanstack/react-router'
 import { ConceptNav } from './ConceptNav'
 import { CONCEPTS } from '../lib/concepts'
 

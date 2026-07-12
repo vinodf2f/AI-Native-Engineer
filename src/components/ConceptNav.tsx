@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import type { ConceptMeta } from '../lib/concepts'
+import type { ConceptMeta } from '../lib/storage'
 
 export function ConceptNav({ prev, next }: { prev: ConceptMeta | null; next: ConceptMeta | null }) {
   return (

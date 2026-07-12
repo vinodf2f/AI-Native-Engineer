@@ -28,8 +28,8 @@ export function EmbeddingDemo() {
     )
   }
 
-  const bothLoaded = embA.data?.vector && embB.data?.vector
-  const similarity = bothLoaded ? cosineSimilarity(embA.data.vector, embB.data.vector) : null
+  const bothLoaded = !!(embA.data?.vector && embB.data?.vector)
+  const similarity = bothLoaded ? cosineSimilarity(embA.data!.vector, embB.data!.vector) : null
 
   function run() {
     setSubmittedA(textA)
@@ -52,8 +52,8 @@ export function EmbeddingDemo() {
       </button>
 
       <div className="grid grid-cols-2 gap-3">
-        <VectorPreview label="A" data={embA.data} error={embA.error} />
-        <VectorPreview label="B" data={embB.data} error={embB.error} />
+        <VectorPreview label="A" data={embA.data} error={embA.error ?? undefined} />
+        <VectorPreview label="B" data={embB.data} error={embB.error ?? undefined} />
       </div>
 
       {bothLoaded && (

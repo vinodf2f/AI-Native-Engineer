@@ -228,7 +228,6 @@ function SidebarContent({
 }
 
 function SectionItem({
-  id,
   title,
   to,
   indicator,
@@ -240,7 +239,7 @@ function SectionItem({
 }) {
   return (
     <Link
-      to={to}
+      to={to as any}
       className="flex items-center justify-between rounded px-2 py-1.5 text-[13px] text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 transition-colors"
       activeProps={{ className: 'bg-zinc-800 text-zinc-100' }}
       activeOptions={{ exact: to === '/' }}
