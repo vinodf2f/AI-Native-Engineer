@@ -6,7 +6,7 @@ export function ConceptNav({ prev, next }: { prev: ConceptMeta | null; next: Con
     <div className="mt-12 pt-6 border-t border-zinc-800 flex justify-between text-[13px]">
       {prev ? (
         <Link
-          to={`/concept/${prev.id}`}
+          to={`/concept/${prev.id}` as any}
           className="text-zinc-400 hover:text-zinc-200"
         >
           ← {prev.title}
@@ -14,7 +14,7 @@ export function ConceptNav({ prev, next }: { prev: ConceptMeta | null; next: Con
       ) : <span />}
       {next ? (
         <Link
-          to={`/concept/${next.id}`}
+          to={`/concept/${next.id}` as any}
           className="text-zinc-400 hover:text-zinc-200 ml-auto"
         >
           {next.title} →
