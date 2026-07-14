@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { motion } from 'framer-motion'
 import { RagFlowDiagram } from '@/components/RagFlowDiagram'
-import { CONCEPTS } from '@/lib/concepts'
 import { loadSettings } from '@/lib/storage'
 
 export const Route = createFileRoute('/_course/')({
@@ -10,16 +9,16 @@ export const Route = createFileRoute('/_course/')({
 
 const AUDIENCES = [
   {
-    title: 'You ship products, not papers',
-    body: 'You build React/Node/Postgres apps. You want to add AI features without going back to school for an ML degree.',
+    title: 'You build products, not models',
+    body: 'React, Node, Postgres — that\'s your stack. You want to add AI to features you already ship, not switch careers to ML research.',
   },
   {
-    title: 'You know the buzzwords, not the trade-offs',
-    body: 'RAG, embeddings, agents, fine-tuning. You nod in meetings. You want to push back with real architecture reasoning.',
+    title: 'You\'ve heard the terms, but can\'t push back yet',
+    body: 'RAG, embeddings, fine-tuning, agents — you nod in meetings but freeze when someone asks "why cosine not Euclidean?" or "should we fine-tune?" You want to answer with confidence, not imposter syndrome.',
   },
   {
-    title: 'Your skills should compound',
-    body: 'TypeScript, Postgres, React — these don\'t get replaced by AI. They get priced in. We show you exactly where they plug in.',
+    title: 'Your skills should compound, not compete',
+    body: 'AI doesn\'t replace your TypeScript, your Postgres, your React. It plugs into them. pgvector is a Postgres extension. Streaming is SSE over fetch. RAG is a query + a prompt. Your existing knowledge is the foundation, not the thing to throw away.',
   },
 ]
 
@@ -242,29 +241,6 @@ function HomePage() {
         <h2 className="text-sm font-semibold text-zinc-300 mb-1">Watch it move</h2>
         <p className="text-[12px] text-zinc-500 mb-4">Auto-playing the full retrieval flow with 3 example queries. Use ⏸/▶ and speed control to follow along.</p>
         <RagFlowDiagram />
-      </motion.div>
-
-      {/* Flat course index */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.35 }}
-        className="border-t border-zinc-800 pt-8"
-      >
-        <h2 className="text-sm font-semibold text-zinc-300 mb-4">All Basics lessons</h2>
-        <div className="space-y-2">
-          {CONCEPTS.map((c: typeof CONCEPTS[number], i: number) => (
-            <Link
-              key={c.id}
-              to={`/concept/${c.id}` as any}
-              className="flex items-center gap-4 rounded-lg border border-zinc-800 bg-zinc-900/50 px-4 py-3 hover:border-zinc-700 hover:bg-zinc-900 transition-colors"
-            >
-              <span className="font-mono text-lg font-light text-zinc-700 w-6">{i + 1}</span>
-              <span className="text-[13px] font-medium text-zinc-200">{c.title}</span>
-              <span className="ml-auto text-[11px] text-zinc-600">→</span>
-            </Link>
-          ))}
-        </div>
       </motion.div>
     </div>
   )
