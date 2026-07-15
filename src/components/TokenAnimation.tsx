@@ -20,7 +20,7 @@ export function TokenAnimation({ text, chunkSize = 4 }: { text: string; chunkSiz
         </motion.span>
       ))}
       <span className="text-[10px] text-zinc-600 self-end ml-2">
-        ~{tokens.length} tokens (illustrative — real tokenizers use BPE)
+        ~{tokens.length} tokens (illustrative   real tokenizers use BPE)
       </span>
     </div>
   )

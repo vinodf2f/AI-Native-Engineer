@@ -62,7 +62,7 @@ export function EmbeddingDemo() {
           animate={{ opacity: 1 }}
           className="rounded-lg border border-zinc-800 bg-zinc-900 px-5 py-4"
         >
-          <p className="text-[12px] text-zinc-500 mb-2">2D projection (first 2 of {embA.data!.vector.length} dimensions — illustrative only)</p>
+          <p className="text-[12px] text-zinc-500 mb-2">2D projection (first 2 of {embA.data!.vector.length} dimensions   illustrative only)</p>
           <EmbeddingScatter
             points={[
               { label: 'A', vector: embA.data!.vector, color: '#34d399' },
@@ -70,7 +70,7 @@ export function EmbeddingDemo() {
             ]}
           />
           <p className="text-[10px] text-zinc-600 text-center mt-2">
-            Real distance lives in 1536D space — this 2D slice just hints at it.
+            Real distance lives in 1536D space   this 2D slice just hints at it.
           </p>
         </motion.div>
       )}
@@ -102,12 +102,12 @@ export function EmbeddingDemo() {
           </div>
           <p className="text-[12px] text-zinc-500 mt-3">
             {similarity > 0.85
-              ? 'Very similar meaning — these would retrieve the same docs.'
+              ? 'Very similar meaning   these would retrieve the same docs.'
               : similarity > 0.5
-                ? 'Related — partial overlap in meaning.'
+                ? 'Related   partial overlap in meaning.'
                 : similarity > 0.25
-                  ? 'Weak relation — different topics, may not retrieve the same docs.'
-                  : 'Unrelated — different topics entirely.'}
+                  ? 'Weak relation   different topics, may not retrieve the same docs.'
+                  : 'Unrelated   different topics entirely.'}
           </p>
         </motion.div>
       )}

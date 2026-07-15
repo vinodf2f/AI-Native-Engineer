@@ -25,7 +25,7 @@ function B4Page() {
 
       <section className="space-y-4 text-[14px] leading-relaxed text-zinc-300">
         <p>
-          <strong>RAG</strong> = Retrieval-Augmented Generation. Plain English: <em>before answering a question, fetch the most relevant documents, give them to the LLM as context, and ask it to answer based on them.</em> That's it. The LLM doesn't memorise your IRCTC policy — you hand it the policy pages on every query.
+          <strong>RAG</strong> = Retrieval-Augmented Generation. Plain English: <em>before answering a question, fetch the most relevant documents, give them to the LLM as context, and ask it to answer based on them.</em> That's it. The LLM doesn't memorise your IRCTC policy   you hand it the policy pages on every query.
         </p>
 
         <Callout title="Why RAG even exists">
@@ -39,15 +39,15 @@ function B4Page() {
           <li><strong className="text-zinc-200">Retrieve:</strong> embed the user's question, find top-K closest chunks (B2 + B3).</li>
           <li><strong className="text-zinc-200">Generate:</strong> paste retrieved chunks + question into a chat prompt; the LLM answers grounded in them (B1).</li>
         </ol>
-        <p className="text-[13px] text-zinc-500">Steps 2-3 you've already built. Step 4 is B1 + a smarter prompt. Step 1 — chunking — is what this lesson focuses on, because it's the step beginners skip and seniors obsess over.</p>
+        <p className="text-[13px] text-zinc-500">Steps 2-3 you've already built. Step 4 is B1 + a smarter prompt. Step 1   chunking   is what this lesson focuses on, because it's the step beginners skip and seniors obsess over.</p>
 
         <h2 className="text-lg font-semibold text-zinc-100 mt-8">Chunking: why size and overlap matter</h2>
         <p>
-          The chunk size you choose changes everything. Too small (50 chars) and you'll split an idea across two chunks — the embedding captures a fragment, not the meaning. Too large (2000 chars) and one chunk mixes multiple topics — retrieval returns a chunk whose main idea isn't relevant. The sweet spot is usually <strong>300-800 chars</strong> with <strong>50-100 chars of overlap</strong> so ideas that span a boundary don't fall through the crack.
+          The chunk size you choose changes everything. Too small (50 chars) and you'll split an idea across two chunks   the embedding captures a fragment, not the meaning. Too large (2000 chars) and one chunk mixes multiple topics   retrieval returns a chunk whose main idea isn't relevant. The sweet spot is usually <strong>300-800 chars</strong> with <strong>50-100 chars of overlap</strong> so ideas that span a boundary don't fall through the crack.
         </p>
 
         <Callout title="Relatable analogy: cutting a textbook">
-          You're photocopying pages for an exam. Cut too small (one sentence per sheet) and you'll miss the connecting idea. Cut too large (whole chapter) and you'll waste your bag space hauling irrelevant content. <strong>Overlap</strong> = running the last sentence of the previous sheet onto the next — so an idea that crosses a page break isn't lost.
+          You're photocopying pages for an exam. Cut too small (one sentence per sheet) and you'll miss the connecting idea. Cut too large (whole chapter) and you'll waste your bag space hauling irrelevant content. <strong>Overlap</strong> = running the last sentence of the previous sheet onto the next   so an idea that crosses a page break isn't lost.
         </Callout>
 
         <h3 className="text-[15px] font-semibold text-zinc-200 mt-6">Three common strategies</h3>
@@ -67,7 +67,7 @@ function B4Page() {
       <section className="mt-10">
         <h2 className="text-lg font-semibold text-zinc-100 mb-2">Try it live</h2>
         <p className="text-[13px] text-zinc-400 mb-4">
-          Adjust chunk size and overlap — watch the preview chunks split differently. Click <strong>Embed chunks → store</strong>, then ask "How do I cancel my train ticket?" — the model answers with citations [1], [2]. Try "What if I miss my train?" and "How do I book a retiring room?" — note how each surfaces different chunks. Then ask something the doc doesn't cover ("How do I cook biryani?") and watch the model correctly refuse.
+          Adjust chunk size and overlap   watch the preview chunks split differently. Click <strong>Embed chunks → store</strong>, then ask "How do I cancel my train ticket?"   the model answers with citations [1], [2]. Try "What if I miss my train?" and "How do I book a retiring room?"   note how each surfaces different chunks. Then ask something the doc doesn't cover ("How do I cook biryani?") and watch the model correctly refuse.
         </p>
         <RagDemo />
 
@@ -107,12 +107,12 @@ function B4Page() {
             prompt: 'You embed a 50-page IRCTC policy as a single 30,000-char chunk. The user asks "How do I file a TDR?" What goes wrong?',
             options: [
               'The embedding is too large to store in pgvector',
-              'The single huge chunk mixes many topics, so the embedding dilutes the TDR idea — retrieval may not rank it high for related queries',
+              'The single huge chunk mixes many topics, so the embedding dilutes the TDR idea   retrieval may not rank it high for related queries',
               'OpenAI rejects chunks over 1000 chars',
-              'Nothing — larger chunks always give better answers',
+              'Nothing   larger chunks always give better answers',
             ],
             answer: 1,
-            explanation: 'One chunk per doc is the most common beginner mistake. A chunk for "TDR filing" buried inside a 50-page policy has its embedding averaged with cancellation, tatkal, retiring rooms, Vande Bharat meals — every neighbouring topic dilutes it. Splitting into focused chunks lets the TDR chunk rank for TDR queries.',
+            explanation: 'One chunk per doc is the most common beginner mistake. A chunk for "TDR filing" buried inside a 50-page policy has its embedding averaged with cancellation, tatkal, retiring rooms, Vande Bharat meals   every neighbouring topic dilutes it. Splitting into focused chunks lets the TDR chunk rank for TDR queries.',
           },
           {
             prompt: 'What is the role of the overlap when chunking?',
@@ -123,14 +123,14 @@ function B4Page() {
               'It reduces the total number of chunks (saves storage)',
             ],
             answer: 2,
-            explanation: 'Without overlap, a sentence that straddles chunk #1 and #2 is split mid-thought — neither chunk captures the full idea. Overlap runs the last N chars of chunk #1 onto the start of #2, so the bridging idea exists in both. Production RAG uses 50-100 chars overlap with ~500-char chunks.',
+            explanation: 'Without overlap, a sentence that straddles chunk #1 and #2 is split mid-thought   neither chunk captures the full idea. Overlap runs the last N chars of chunk #1 onto the start of #2, so the bridging idea exists in both. Production RAG uses 50-100 chars overlap with ~500-char chunks.',
           },
           {
             prompt: 'What does the system prompt "Answer using only the context below. Say if unsure." actually do?',
             options: [
               'Guarantees the model will never hallucinate',
               'Trains the model on your documents at runtime',
-              'Strongly biases the model to ground answers in retrieved chunks and to refuse when context is missing — a soft guardrail, not a guarantee',
+              'Strongly biases the model to ground answers in retrieved chunks and to refuse when context is missing   a soft guardrail, not a guarantee',
               'Triggers GPT-4o instead of GPT-4o-mini automatically',
             ],
             answer: 2,
@@ -145,7 +145,7 @@ function B4Page() {
               'The model searches Google automatically',
             ],
             answer: 1,
-            explanation: 'Retrieval still runs — it returns train chunks even though they\'re semantically distant from biryani. But the model sees those chunks don\'t address the question and, with the grounding prompt, refuses. This is the "I don\'t have enough information" moment — exactly what you want to see, not a hallucinated recipe.',
+            explanation: 'Retrieval still runs   it returns train chunks even though they\'re semantically distant from biryani. But the model sees those chunks don\'t address the question and, with the grounding prompt, refuses. This is the "I don\'t have enough information" moment   exactly what you want to see, not a hallucinated recipe.',
           },
         ]}
         onComplete={() => setStatus('b4', 'complete')}

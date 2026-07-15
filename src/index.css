@@ -24,9 +24,9 @@
   --zinc-200: 39 39 42;
   --zinc-300: 63 63 70;
   --zinc-400: 82 82 91;
-  --zinc-500: 113 113 122;
-  --zinc-600: 161 161 170;
-  --zinc-700: 212 212 216;
+  --zinc-500: 82 82 91;
+  --zinc-600: 113 113 122;
+  --zinc-700: 113 113 122;
   --zinc-800: 228 228 231;
   --zinc-900: 244 244 245;
   --zinc-950: 250 250 250;
@@ -54,3 +54,21 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Light mode — stronger contrast on named colors (emerald, sky, amber) */
+[data-theme="light"] .text-emerald-300 { color: #047857 !important; }
+[data-theme="light"] .text-emerald-400 { color: #059669 !important; }
+[data-theme="light"] .text-emerald-200 { color: #065f46 !important; }
+[data-theme="light"] .text-sky-300 { color: #0369a1 !important; }
+[data-theme="light"] .text-amber-300 { color: #b45309 !important; }
+[data-theme="light"] .text-red-200 { color: #dc2626 !important; }
+[data-theme="light"] .text-red-300 { color: #b91c1c !important; }
+[data-theme="light"] .text-emerald-400\/70 { color: #047857 !important; }
+[data-theme="light"] .bg-emerald-500\/5 { background: rgba(5, 150, 105, 0.08) !important; }
+[data-theme="light"] .bg-emerald-500\/10 { background: rgba(5, 150, 105, 0.1) !important; }
+[data-theme="light"] .border-emerald-500\/40 { border-color: rgba(5, 150, 105, 0.5) !important; }
+[data-theme="light"] .text-emerald-400\/80 { color: #059669 !important; }
+[data-theme="light"] .hover\:border-zinc-500:hover { border-color: #52525b !important; }
+[data-theme="light"] .text-zinc-400 { color: #52525b !important; }
+[data-theme="light"] .text-zinc-500 { color: #52525b !important; }
+[data-theme="light"] .text-zinc-600 { color: #71717a !important; }

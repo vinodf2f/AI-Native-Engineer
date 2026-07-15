@@ -26,9 +26,9 @@ function B2Page() {
 
       <section className="space-y-4 text-[14px] leading-relaxed text-zinc-300">
         <p>
-          An embedding is a list of numbers representing the <em>meaning</em> of text. That's it. "The cat sat on the mat" becomes <code className="font-mono text-zinc-400">[0.012, -0.43, 0.88, ...]</code> — 1536 numbers for <code className="font-mono text-zinc-400">text-embedding-3-small</code>.
+          An embedding is a list of numbers representing the <em>meaning</em> of text. That's it. "The cat sat on the mat" becomes <code className="font-mono text-zinc-400">[0.012, -0.43, 0.88, ...]</code>   1536 numbers for <code className="font-mono text-zinc-400">text-embedding-3-small</code>.
         </p>
-        <p className="text-[13px] text-zinc-500">In Indian context: a user typing <span className="font-mono text-zinc-400">"train refund kaise milega"</span> and another typing <span className="font-mono text-zinc-400">"how to get money back for cancelled train"</span> should have <em>close</em> embeddings — same idea, different words. That's what makes embeddings useful for Indian users who mix Hindi-English.</p>
+        <p className="text-[13px] text-zinc-500">In Indian context: a user typing <span className="font-mono text-zinc-400">"train refund kaise milega"</span> and another typing <span className="font-mono text-zinc-400">"how to get money back for cancelled train"</span> should have <em>close</em> embeddings   same idea, different words. That's what makes embeddings useful for Indian users who mix Hindi-English.</p>
 
         <h2 className="text-lg font-semibold text-zinc-100 mt-8">Meaning as coordinates</h2>
         <p>
@@ -59,52 +59,52 @@ function B2Page() {
         </p>
 
         <Callout title="Relatable analogy: IRCTC search">
-          On IRCTC you type "CSMT" and the system knows you mean Mumbai CST — that's exact match. Embeddings do the same idea but for <em>meaning</em>: a user asking <span className="font-mono text-zinc-400">"how to get refund for cancelled train"</span> finds the same FAQ as <span className="font-mono text-zinc-400">"train cancel hone par refund kaise milega"</span> — no words overlap, embeddings still land close.
+          On IRCTC you type "CSMT" and the system knows you mean Mumbai CST   that's exact match. Embeddings do the same idea but for <em>meaning</em>: a user asking <span className="font-mono text-zinc-400">"how to get refund for cancelled train"</span> finds the same FAQ as <span className="font-mono text-zinc-400">"train cancel hone par refund kaise milega"</span>   no words overlap, embeddings still land close.
         </Callout>
 
         <h2 className="text-lg font-semibold text-zinc-100 mt-8">Cosine similarity: how "close" is measured</h2>
         <p>
-          We don't measure distance in embedding space with a ruler. We measure the <strong>angle</strong> between two vectors. If they point in the same direction (cosine = 1), meanings are identical. If perpendicular (0), unrelated. If opposite (-1), antonymous — in theory.
+          We don't measure distance in embedding space with a ruler. We measure the <strong>angle</strong> between two vectors. If they point in the same direction (cosine = 1), meanings are identical. If perpendicular (0), unrelated. If opposite (-1), antonymous   in theory.
         </p>
         <p className="text-[13px] text-zinc-500">
-          Math, for the curious: cosine(θ) = (A·B) / (|A|·|B|) — dot product over magnitudes. You'll implement this yourself in the service file. It's ~5 lines of code.
+          Math, for the curious: cosine(θ) = (A·B) / (|A|·|B|)   dot product over magnitudes. You'll implement this yourself in the service file. It's ~5 lines of code.
         </p>
 
         <Callout title="Will I ever see a score of -1?">
           <strong>No, practically never.</strong> Modern embedding models (OpenAI, Cohere, BGE) place all texts in the positive cosine region. Real scores range from ~0.10 (totally unrelated) to ~0.95 (same idea rephrased). Negative cosine is textbook math that essentially never happens with production embeddings.
           <br /><br />
-          The closest you'll get to "opposite" is around <strong>0.10-0.20</strong>: e.g. <span className="font-mono text-zinc-400">"I love this product"</span> vs <span className="font-mono text-zinc-400">"Worst purchase of my life"</span> still scores ~0.55+ because both live in the "product review" cluster. That's why production RAG tunes thresholds on the realistic 0.2–0.9 range and uses percentile rank within your corpus — not raw cosine values.
+          The closest you'll get to "opposite" is around <strong>0.10-0.20</strong>: e.g. <span className="font-mono text-zinc-400">"I love this product"</span> vs <span className="font-mono text-zinc-400">"Worst purchase of my life"</span> still scores ~0.55+ because both live in the "product review" cluster. That's why production RAG tunes thresholds on the realistic 0.2–0.9 range and uses percentile rank within your corpus   not raw cosine values.
         </Callout>
 
         <h2 className="text-lg font-semibold text-zinc-100 mt-8">Dimensionality: bigger isn't always better</h2>
         <p>
-          OpenAI's <code className="font-mono text-zinc-400">text-embedding-3-small</code> has 1536 dimensions. <code className="font-mono text-zinc-400">-large</code> has 3072. More dimensions capture more nuance, but cost more storage and more compute at search time. We'll use <code className="font-mono text-zinc-400">-small</code> for this course — it's the production default for most RAG apps.
+          OpenAI's <code className="font-mono text-zinc-400">text-embedding-3-small</code> has 1536 dimensions. <code className="font-mono text-zinc-400">-large</code> has 3072. More dimensions capture more nuance, but cost more storage and more compute at search time. We'll use <code className="font-mono text-zinc-400">-small</code> for this course   it's the production default for most RAG apps.
         </p>
       </section>
 
-      <Callout title="Common confusion: 'good' vs 'bad' scores high — why?">
-        Type <span className="font-mono text-zinc-400">"good"</span> in Text A and <span className="font-mono text-zinc-400">"bad"</span> in Text B in the demo below. You'll see a score around 0.55-0.70 — not negative. Antonyms aren't opposites in vector space; they're <em>grammatically interchangeable</em>, so they live in the same neighbourhood ("evaluative adjective describing something"). Embeddings capture co-occurrence, not polarity.
+      <Callout title="Common confusion: 'good' vs 'bad' scores high   why?">
+        Type <span className="font-mono text-zinc-400">"good"</span> in Text A and <span className="font-mono text-zinc-400">"bad"</span> in Text B in the demo below. You'll see a score around 0.55-0.70   not negative. Antonyms aren't opposites in vector space; they're <em>grammatically interchangeable</em>, so they live in the same neighbourhood ("evaluative adjective describing something"). Embeddings capture co-occurrence, not polarity.
         <br /><br />
         Try these in the demo to see cosine correctly separate <em>completely unrelated</em> topics (scores near 0.1-0.2):
         <ul className="mt-2 ml-4 list-disc space-y-1">
-          <li>"good" vs "bad" → ~0.60 (same grammar role, same cluster — antonyms don't oppose)</li>
+          <li>"good" vs "bad" → ~0.60 (same grammar role, same cluster   antonyms don't oppose)</li>
           <li>"good" vs "What time does the Mumbai local leave for Pune?" → ~0.15 (totally different topics)</li>
           <li>"Restaurant menu prices" vs "Cricket score from yesterday's match" → ~0.18 (no shared context)</li>
           <li>"React hooks tutorial" vs "How to file GST return online" → ~0.12 (different domains)</li>
         </ul>
-        <strong>Takeaway:</strong> embeddings capture meaning, but they miss negation and sentiment polarity. For sentiment-sensitive features, layer a classifier or an LLM reasoning step on top — don't rely on cosine alone.
+        <strong>Takeaway:</strong> embeddings capture meaning, but they miss negation and sentiment polarity. For sentiment-sensitive features, layer a classifier or an LLM reasoning step on top   don't rely on cosine alone.
       </Callout>
 
       <section className="mt-10">
         <h2 className="text-lg font-semibold text-zinc-100 mb-2">Try it live</h2>
         <p className="text-[13px] text-zinc-400 mb-4">
-          Defaults show the same question asked two different ways. Watch the score. Then try: (A) "I want to eat pani puri" vs (B) "Craving golgappa tonight" — same food, no shared words. Then try (A) "How is the stock market doing" vs (B) "Share market kaisa hai" — Hinglish vs English.
+          Defaults show the same question asked two different ways. Watch the score. Then try: (A) "I want to eat pani puri" vs (B) "Craving golgappa tonight"   same food, no shared words. Then try (A) "How is the stock market doing" vs (B) "Share market kaisa hai"   Hinglish vs English.
         </p>
         <EmbeddingDemo />
 
         <UnderTheHood
           title="How this works: services/embeddings.ts (embed call + cosine from scratch)"
-          description="The demo embeds both texts via OpenAI's /v1/embeddings endpoint, then computes cosine similarity locally — no second API call. The cosine function is 5 lines of math."
+          description="The demo embeds both texts via OpenAI's /v1/embeddings endpoint, then computes cosine similarity locally   no second API call. The cosine function is 5 lines of math."
           language="tsx"
           code={`export async function createEmbedding(input: string, model = 'text-embedding-3-small') {
   const res = await fetch('https://api.openai.com/v1/embeddings', {
@@ -151,9 +151,9 @@ export function cosineSimilarity(a: number[], b: number[]): number {
           {
             prompt: 'You test "good" vs "bad" in the live demo and see a score of 0.62. What does this tell you about embeddings?',
             options: [
-              'The embedding model is broken — antonyms should score negative',
+              'The embedding model is broken   antonyms should score negative',
               'Cosine similarity is the wrong metric for vectors',
-              'Embeddings capture grammatical context/co-occurrence, not sentiment polarity — "good" and "bad" appear in similar sentence slots',
+              'Embeddings capture grammatical context/co-occurrence, not sentiment polarity   "good" and "bad" appear in similar sentence slots',
               'OpenAI is intentionally biasing scores to be positive',
             ],
             answer: 2,

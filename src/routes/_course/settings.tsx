@@ -36,10 +36,13 @@ function SettingsPage() {
         placeholder="sk-..."
         className="w-full mb-1 rounded border border-zinc-800 bg-zinc-900 px-3 py-2 font-mono text-sm text-zinc-200 outline-none focus:border-zinc-600"
       />
-      <p className="text-[11px] text-zinc-500 mb-5">
-        Stored only in localStorage. Never sent anywhere except OpenAI's API. Get a pay-as-you-go key at
-        platform.openai.com.
-      </p>
+      <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 px-3 py-2.5 mb-5 flex items-start gap-2">
+        <span className="text-zinc-500 text-sm mt-0.5 shrink-0">ℹ</span>
+        <p className="text-[12px] text-zinc-500 leading-relaxed">
+          Your key is stored <strong className="text-zinc-400">only in your browser's localStorage</strong>. It is never sent to any server except OpenAI's API directly from your browser.
+          This is safe for learning but not production   in a real app, proxy through your own backend.
+        </p>
+      </div>
 
       <label className="block mb-2 text-[13px] font-medium text-zinc-300">Default Model</label>
       <select

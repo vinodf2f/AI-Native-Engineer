@@ -25,7 +25,7 @@ function B6Page() {
 
       <section className="space-y-4 text-[14px] leading-relaxed text-zinc-300">
         <p>
-          A normal LLM call takes ~2-10 seconds to complete before you can show anything. That feels broken — every ChatGPT-style UI you've used shows tokens <em>as they arrive</em>, not after. That visual effect isn't decoration; it's how you make an 8-second response feel like 1 second.
+          A normal LLM call takes ~2-10 seconds to complete before you can show anything. That feels broken   every ChatGPT-style UI you've used shows tokens <em>as they arrive</em>, not after. That visual effect isn't decoration; it's how you make an 8-second response feel like 1 second.
         </p>
 
         <h2 className="text-lg font-semibold text-zinc-100 mt-8">What streaming actually is</h2>
@@ -33,11 +33,11 @@ function B6Page() {
           With a normal HTTP request, the server holds the entire response and sends it once at the end. With <strong>streaming</strong>, the server sends chunks as soon as they're ready, over a persistent connection. The browser processes each chunk as it arrives.
         </p>
         <p>
-          OpenAI's API supports a <code className="font-mono text-zinc-400">stream: true</code> flag that switches on this mode. Instead of one big JSON response, OpenAI sends a series of small ones — each carrying one piece of the answer. The browser processes each chunk as it arrives.
+          OpenAI's API supports a <code className="font-mono text-zinc-400">stream: true</code> flag that switches on this mode. Instead of one big JSON response, OpenAI sends a series of small ones   each carrying one piece of the answer. The browser processes each chunk as it arrives.
         </p>
 
         <Callout title="Relatable analogy: a cricket score on a live ticker">
-          A non-streaming API is like waiting for the entire match to end before someone tells you who won. A streaming API is the live ticker on Cricbuzz — every ball, every run, every wicket arrives as it happens. The match isn't faster; your perception of progress is.
+          A non-streaming API is like waiting for the entire match to end before someone tells you who won. A streaming API is the live ticker on Cricbuzz   every ball, every run, every wicket arrives as it happens. The match isn't faster; your perception of progress is.
         </Callout>
 
         <p className="text-[13px] text-zinc-500">
@@ -53,23 +53,23 @@ function B6Page() {
 
         <h3 className="text-[15px] font-semibold text-zinc-200 mt-4">2. Progressive rendering</h3>
         <p>
-          Append each token to a React state as it arrives. Framer Motion can fade-in the block once; React's re-render loop handles the rest. <strong>Don't animate per token</strong> — at 30 tokens/second that causes jank. The text simply grows.
+          Append each token to a React state as it arrives. Framer Motion can fade-in the block once; React's re-render loop handles the rest. <strong>Don't animate per token</strong>   at 30 tokens/second that causes jank. The text simply grows.
         </p>
 
         <Callout title="Production tip: citations snap in after streaming">
-          In a real RAG UI, retrieval happens <em>before</em> generation. So typically: (1) fetch docs (~200ms), (2) render citations list, (3) start streaming LLM answer grounded in those docs. The user sees citations appear immediately — even if the answer is still being generated — which keeps perceived latency low.
+          In a real RAG UI, retrieval happens <em>before</em> generation. So typically: (1) fetch docs (~200ms), (2) render citations list, (3) start streaming LLM answer grounded in those docs. The user sees citations appear immediately   even if the answer is still being generated   which keeps perceived latency low.
         </Callout>
 
         <h2 className="text-lg font-semibold text-zinc-100 mt-8">Measuring perceived latency</h2>
         <p>
-          The metric that matters is <strong>time-to-first-token (TTFT)</strong> — how many ms between pressing "Send" and seeing the first text appear. Streaming usually cuts perceived latency by 70%+ vs waiting for a full response, even if total time is identical. Track this in your observability (Phase C).
+          The metric that matters is <strong>time-to-first-token (TTFT)</strong>   how many ms between pressing "Send" and seeing the first text appear. Streaming usually cuts perceived latency by 70%+ vs waiting for a full response, even if total time is identical. Track this in your observability (Phase C).
         </p>
       </section>
 
       <section className="mt-10">
         <h2 className="text-lg font-semibold text-zinc-100 mb-2">Try it live</h2>
         <p className="text-[13px] text-zinc-400 mb-4">
-          Click <strong>Stream answer</strong> — tokens appear one-by-one. Click <strong>Cancel stream</strong> mid-answer to abort (you'll see the response stop, and the rest is unbilled). Try it twice: once with a small prompt (fast TTFT), once with a long answer request (you can really see the stream). Note the tokens/sec stat.
+          Click <strong>Stream answer</strong>   tokens appear one-by-one. Click <strong>Cancel stream</strong> mid-answer to abort (you'll see the response stop, and the rest is unbilled). Try it twice: once with a small prompt (fast TTFT), once with a long answer request (you can really see the stream). Note the tokens/sec stat.
         </p>
         <StreamingDemo />
 
@@ -112,7 +112,7 @@ function B6Page() {
             prompt: 'Total time to generate a full response is the same with streaming vs. non-streaming. Why does streaming still feel dramatically faster to the user?',
             options: [
               'Streaming uses a faster model automatically',
-              'Time-to-first-token drops dramatically — the user sees the first word after ~150ms instead of waiting 8s for the full answer',
+              'Time-to-first-token drops dramatically   the user sees the first word after ~150ms instead of waiting 8s for the full answer',
               'Streaming skips the embedding step',
               'Streaming batches multiple user queries together',
             ],
@@ -123,12 +123,12 @@ function B6Page() {
             prompt: 'Why do we pass an AbortController signal into fetch() in the streaming service?',
             options: [
               'To prevent the LLM from generating too many tokens',
-              'To let the user cancel the stream — calling ac.abort() immediately resolves the fetch and stops OpenAI from billing for further tokens',
+              'To let the user cancel the stream   calling ac.abort() immediately resolves the fetch and stops OpenAI from billing for further tokens',
               'To set the request timeout to 5 seconds',
               'To compress the response payload',
             ],
             answer: 1,
-            explanation: 'AbortController is the browser\'s standard way to cancel any async operation. Pass signal to fetch → the request and its reader die instantly on abort(). You also save the unbilled portion of the answer — measurable cost saving at scale.',
+            explanation: 'AbortController is the browser\'s standard way to cancel any async operation. Pass signal to fetch → the request and its reader die instantly on abort(). You also save the unbilled portion of the answer   measurable cost saving at scale.',
           },
           {
             prompt: 'Each line arriving in the stream looks like `data: {"choices":[{"delta":{"content":"token"}}]}`. What is this format called?',
@@ -145,7 +145,7 @@ function B6Page() {
             prompt: 'In a production RAG UI, why do citations appear before the streamed answer starts?',
             options: [
               'Citations are cached forever; answers are not',
-              'Retrieval runs first and is fast (~200ms), so the UI shows matched chunks immediately — making the user feel something is happening while the LLM generates the grounded answer',
+              'Retrieval runs first and is fast (~200ms), so the UI shows matched chunks immediately   making the user feel something is happening while the LLM generates the grounded answer',
               'The LLM refuses to start streaming until citations are rendered',
               'Citations are static and hardcoded',
             ],

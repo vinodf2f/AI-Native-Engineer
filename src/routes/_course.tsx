@@ -1,5 +1,5 @@
 import { Link, Outlet, createFileRoute, useRouterState } from '@tanstack/react-router'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { CONCEPT_GROUPS } from '../lib/concepts'
 import { loadProgress, loadSettings, subscribe, type ConceptStatus } from '../lib/storage'
@@ -15,6 +15,7 @@ function CourseLayout() {
   const [theme, setTheme] = useState<Theme>(getStoredTheme)
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const routerState = useRouterState()
+  const mainRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
     const unsub = subscribe(() => {
@@ -28,6 +29,10 @@ function CourseLayout() {
 
   useEffect(() => {
     setSidebarOpen(false)
+  }, [routerState.location.pathname])
+
+  useEffect(() => {
+    mainRef.current?.scrollTo(0, 0)
   }, [routerState.location.pathname])
 
   useEffect(() => { applyTheme(theme) }, [theme])
@@ -104,7 +109,7 @@ function CourseLayout() {
       </AnimatePresence>
 
       {/* Main content */}
-      <main className="flex-1 overflow-y-auto scrollbar-thin pt-12 md:pt-0">
+      <main ref={mainRef} className="flex-1 overflow-y-auto scrollbar-thin pt-12 md:pt-0">
         <Outlet />
       </main>
     </div>

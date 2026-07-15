@@ -66,7 +66,7 @@ export async function streamChatCompletion(
           cb.onToken(token)
         }
       } catch {
-        // incomplete JSON, ignore — next chunk will complete it
+        // incomplete JSON, ignore   next chunk will complete it
       }
     }
   }

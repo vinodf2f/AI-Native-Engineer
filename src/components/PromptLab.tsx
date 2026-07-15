@@ -182,7 +182,7 @@ export function PromptLab() {
               {isValidJson(data.content) ? (
                 <span className="text-emerald-400">✓ Valid JSON</span>
               ) : (
-                <span className="text-red-400">✗ Not valid JSON — model returned extra text. Tighten the prompt.</span>
+                <span className="text-red-400">✗ Not valid JSON   model returned extra text. Tighten the prompt.</span>
               )}
             </div>
           )}

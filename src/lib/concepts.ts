@@ -8,6 +8,7 @@ export const CONCEPTS: ConceptMeta[] = [
   { id: 'b5', title: 'Prompt Engineering', phase: 'B', status: 'not-started' },
   { id: 'b6', title: 'Streaming + UI', phase: 'B', status: 'not-started' },
   { id: 'b7', title: 'Evaluation', phase: 'B', status: 'not-started' },
+  { id: 'b8', title: 'Integration', phase: 'B', status: 'not-started' },
 ]
 
 export type ConceptGroup = {
