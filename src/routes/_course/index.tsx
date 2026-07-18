@@ -77,6 +77,51 @@ const PHASES = [
   { title: 'Agentify', plain: 'Wrap retrieval as a tool the LLM calls autonomously.', detail: 'Plan → call tool → observe → repeat. Multi-step research, automatically.', concept: null, label: 'Phase C · Agents (later)' },
 ]
 
+const WHAT_YOU_BUILD = [
+  { item: 'Live completion call', learn: 'You understand tokens & cost', concept: 'b1' },
+  { item: 'Embedding comparison', learn: 'You can explain cosine similarity', concept: 'b2' },
+  { item: 'Vector store + search', learn: 'You know how pgvector + ANN work', concept: 'b3' },
+  { item: 'RAG with citations', learn: 'You can build grounded Q&A', concept: 'b4' },
+  { item: 'Prompt lab', learn: 'You can design prompts that work', concept: 'b5' },
+  { item: 'Streaming UI', learn: 'You can stream responses like ChatGPT does', concept: 'b6' },
+  { item: 'Eval suite', learn: 'You can test prompts for regressions', concept: 'b7' },
+]
+
+const REAL_PROJECTS = [
+  {
+    title: 'AI FAQ Bot',
+    subtitle: 'RAG done right',
+    desc: 'Upload product docs → ingest → embed → store in pgvector → retrieve → answer with citations. Eval suite catches regressions when prompts change.',
+    pattern: 'Retrieval + grounding + eval',
+    stack: 'Node.js + pgvector + OpenAI + React',
+    interview: 'I built a production RAG bot over real product docs with an eval suite that catches regressions when I change prompts.',
+  },
+  {
+    title: 'Document Parser',
+    subtitle: 'Structured extraction',
+    desc: 'Extract structured JSON from unstructured invoices, resumes, contracts. Schema-validated output. Falls back to human review on low confidence.',
+    pattern: 'Prompt engineering + JSON output + eval',
+    stack: 'Node.js + OpenAI + Zod + React',
+    interview: 'I extract structured data from unstructured documents — 95% accuracy, falls back to human review on low confidence.',
+  },
+  {
+    title: 'AI Code Reviewer',
+    subtitle: 'Multi-step reasoning + tools',
+    desc: 'Bot reads PR diffs, runs tests, checks patterns, suggests refactors with citations. The agent frontier — tool calling in practice.',
+    pattern: 'Agent tool calling + multi-step',
+    stack: 'Node.js + OpenAI + GitHub API + React',
+    interview: 'I built a bot that reviews PRs — it runs tests, checks for patterns, suggests refactors with citations.',
+  },
+  {
+    title: 'Real-time Classifier',
+    subtitle: 'Streaming classification',
+    desc: 'Classify 1000 reviews/min with cost per item under $0.001. Temperature=0, structured labels, streaming UI.',
+    pattern: 'Classification + streaming + cost control',
+    stack: 'Node.js + OpenAI + WebSocket + React',
+    interview: 'I built a real-time classifier that tags 1000 items/min with cost per item under $0.001.',
+  },
+]
+
 function HomePage() {
   const hasKey = Boolean(loadSettings().apiKey)
   const [diagramOpen, setDiagramOpen] = useState(false)
@@ -91,10 +136,11 @@ function HomePage() {
           AI, explained for engineers
         </h1>
         <p className="mt-3 text-[15px] text-zinc-400 max-w-2xl leading-relaxed">
-          Modern AI   in plain TypeScript. Buzzwords, patterns, real API calls. Built for engineers who want to ship AI features into products they already build.
+          Stop nodding in AI meetings. Start pushing back with real architecture reasoning.
+          Built for engineers who ship products — not for people who want to become ML researchers.
         </p>
         <p className="mt-2 text-[13px] text-emerald-400/80">
-          Every lesson is a live demo   real OpenAI API call, real cost, real behavior. No mocks.
+          Every lesson is a live demo — real OpenAI API call, real cost, real behavior. No mocks.
         </p>
         <div className="mt-4 flex flex-wrap gap-3 items-center">
           <StickyCta to="/concept/b1" label="Start with Basics" />
@@ -232,11 +278,71 @@ function HomePage() {
         </div>
       </motion.div>
 
+      {/* What you'll build */}
+      <motion.div
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.25 }}
+        className="mb-14"
+      >
+        <h2 className="text-sm font-semibold text-zinc-300 mb-1">What you'll build (and what you'll understand)</h2>
+        <p className="text-[12px] text-zinc-500 mb-5">Each Basics lesson ends with a working demo — and a real understanding you can use in any conversation.</p>
+        <div className="rounded-lg border border-zinc-800 overflow-hidden">
+          {WHAT_YOU_BUILD.map((w, i) => (
+            <Link
+              key={w.concept}
+              to={`/concept/${w.concept}` as any}
+              className={`flex items-center justify-between gap-3 px-4 py-2.5 hover:bg-zinc-800/50 transition-colors ${
+                i < WHAT_YOU_BUILD.length - 1 ? 'border-b border-zinc-800' : ''
+              }`}
+            >
+              <span className="text-[13px] text-zinc-200">{w.item}</span>
+              <span className="text-[11px] text-zinc-500 text-right">{w.learn}</span>
+            </Link>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* Real projects */}
+      <motion.div
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="mb-14"
+      >
+        <h2 className="text-sm font-semibold text-zinc-300 mb-1">Real projects to build next</h2>
+        <p className="text-[12px] text-zinc-500 mb-5">Not "chat with your PDF." Four distinct AI patterns — each portfolio-worthy, each domain-neutral.</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {REAL_PROJECTS.map((p, i) => (
+            <motion.div
+              key={p.title}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 + i * 0.05 }}
+              className="rounded-lg border border-zinc-800 bg-zinc-900/50 px-4 py-3"
+            >
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="text-[14px] font-semibold text-zinc-200">{p.title}</h3>
+                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-zinc-700/40 text-zinc-500">
+                  {p.pattern}
+                </span>
+              </div>
+              <p className="text-[12px] text-zinc-400 leading-relaxed mb-2">{p.desc}</p>
+              <p className="text-[11px] text-zinc-600 mb-2">{p.stack}</p>
+              <div className="rounded border border-zinc-800/60 bg-zinc-950/50 px-3 py-2 mt-2">
+                <p className="text-[10px] uppercase tracking-wider text-zinc-600 mb-1">In an interview</p>
+                <p className="text-[11.5px] text-zinc-400 leading-relaxed">{p.interview}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
+
       {/* Watch it move (collapsible) */}
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
+        transition={{ delay: 0.35 }}
         className="mb-14"
       >
         <button
