@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { streamChatCompletion } from '../services/streaming'
-import { loadSettings } from '../lib/storage'
+import { hasAnyApiKey, resolveTask } from '../lib/storage'
 
 export function StreamingDemo() {
   const [prompt, setPrompt] = useState('Explain how train ticket refunds work on IRCTC, in plain Hindi-English for an Indian user. Keep it under 100 words.')
@@ -11,12 +11,12 @@ export function StreamingDemo() {
   const [stats, setStats] = useState<{ tokens: number; ms: number } | null>(null)
   const abortRef = useRef<AbortController | null>(null)
 
-  const apiKey = loadSettings().apiKey
-  if (!apiKey) {
+  const hasKey = hasAnyApiKey()
+  if (!hasKey) {
     return (
       <div className="rounded-lg border border-red-500/30 bg-red-500/5 px-5 py-4 my-6">
         <p className="text-[13px] text-red-200">
-          No API key set. Add your OpenAI key in <a href="/settings" className="underline">Settings</a>.
+          Add an API key in <a href="/settings" className="underline">Settings</a>.
         </p>
       </div>
     )
@@ -35,7 +35,7 @@ export function StreamingDemo() {
     try {
       await streamChatCompletion(
         [{ role: 'user', content: prompt }],
-        loadSettings().model,
+        resolveTask('stream').model,
         ac.signal,
         {
           onToken: (t) => {

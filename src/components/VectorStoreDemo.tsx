@@ -2,7 +2,7 @@ import { useState, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { motion, AnimatePresence } from 'framer-motion'
 import { VectorStore, type SearchResult } from '../services/vectorStore'
-import { loadSettings } from '../lib/storage'
+import { hasAnyApiKey } from '../lib/storage'
 
 const SEED_DOCS = [
   'To cancel a confirmed train ticket, log in to IRCTC, go to My Transactions, select Booked History, and click Cancel.',
@@ -23,12 +23,12 @@ export function VectorStoreDemo() {
   const [adding, setAdding] = useState(false)
   const [customText, setCustomText] = useState('')
 
-  const apiKey = loadSettings().apiKey
-  if (!apiKey) {
+  const hasKey = hasAnyApiKey()
+  if (!hasKey) {
     return (
       <div className="rounded-lg border border-red-500/30 bg-red-500/5 px-5 py-4 my-6">
         <p className="text-[13px] text-red-200">
-          No API key set. Add your OpenAI key in <a href="/settings" className="underline">Settings</a>.
+          Add an API key in <a href="/settings" className="underline">Settings</a>.
         </p>
       </div>
     )

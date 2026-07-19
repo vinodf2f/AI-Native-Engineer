@@ -1,4 +1,5 @@
-import { loadSettings } from '../lib/storage'
+import { CHAT_PRICING, PROVIDERS, type ProviderId } from '../lib/providers'
+import { loadSettings, resolveTask } from '../lib/storage'
 
 export type ChatMessage = { role: 'system' | 'user' | 'assistant'; content: string }
 
@@ -9,44 +10,50 @@ export type ChatCompletion = {
   totalTokens: number
   cost: number
   model: string
+  provider: ProviderId
   finishReason: string
 }
 
-const PRICING: Record<string, { in: number; out: number }> = {
-  'gpt-4o-mini': { in: 0.00015, out: 0.0006 },
-  'gpt-4o': { in: 0.0025, out: 0.01 },
-}
-
-const BASE_URL = 'https://api.openai.com/v1'
-
 export async function createChatCompletion(
   messages: ChatMessage[],
+  /** Override model id; provider still comes from Settings → chat task */
   model?: string,
+  task: 'chat' | 'tools' = 'chat',
 ): Promise<ChatCompletion> {
   const settings = loadSettings()
-  const resolvedModel = model ?? settings.model
+  const resolved = resolveTask(task, settings)
+  const resolvedModel = model ?? resolved.model
+  const provider = resolved.provider
+  const apiKey = resolved.apiKey
+  const baseUrl = PROVIDERS[provider].baseUrl
 
-  if (!settings.apiKey) {
-    throw new Error('No API key set. Add your OpenAI key in Settings.')
+  if (!apiKey) {
+    throw new Error(
+      `No ${PROVIDERS[provider].name} API key. Add it in Settings (used for “${task}”).`,
+    )
   }
 
-  const res = await fetch(`${BASE_URL}/chat/completions`, {
+  const res = await fetch(`${baseUrl}/chat/completions`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${settings.apiKey}`,
+      Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({ model: resolvedModel, messages }),
   })
 
   if (!res.ok) {
     const err = (await res.json().catch(() => ({}))) as { error?: { message?: string } }
-    throw new Error(err?.error?.message ?? `OpenAI API error (${res.status})`)
+    throw new Error(err?.error?.message ?? `${PROVIDERS[provider].name} error (${res.status})`)
   }
 
   const data = await res.json()
-  const price = PRICING[resolvedModel] ?? PRICING['gpt-4o-mini']
-  const { prompt_tokens, completion_tokens, total_tokens } = data.usage
+  const price = CHAT_PRICING[resolvedModel] ?? CHAT_PRICING['gpt-4o-mini']
+  const { prompt_tokens, completion_tokens, total_tokens } = data.usage ?? {
+    prompt_tokens: 0,
+    completion_tokens: 0,
+    total_tokens: 0,
+  }
 
   return {
     content: data.choices[0].message.content,
@@ -55,6 +62,7 @@ export async function createChatCompletion(
     totalTokens: total_tokens,
     cost: (prompt_tokens / 1_000_000) * price.in + (completion_tokens / 1_000_000) * price.out,
     model: resolvedModel,
+    provider,
     finishReason: data.choices[0].finish_reason,
   }
 }
