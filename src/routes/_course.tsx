@@ -1,9 +1,14 @@
 import { Link, Outlet, createFileRoute, useRouterState } from '@tanstack/react-router'
 import { useState, useEffect, useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { CONCEPT_GROUPS } from '../lib/concepts'
-import { loadProgress, loadSettings, subscribe, type ConceptStatus } from '../lib/storage'
+import { CONCEPT_GROUPS, READY_CONCEPTS } from '../lib/concepts'
+import { loadProgress, hasAnyApiKey, subscribe, type ConceptStatus } from '../lib/storage'
 import { getStoredTheme, storeTheme, applyTheme, type Theme } from '../lib/theme'
+import {
+  LessonStickyBar,
+  MobileLessonTitle,
+  useLessonFromPath,
+} from '../components/LessonStickyHeader'
 
 export const Route = createFileRoute('/_course')({
   component: CourseLayout,
@@ -11,7 +16,7 @@ export const Route = createFileRoute('/_course')({
 
 function CourseLayout() {
   const [progress, setProgress] = useState<Record<string, ConceptStatus>>(loadProgress)
-  const [hasKey, setHasKey] = useState(Boolean(loadSettings().apiKey))
+  const [hasKey, setHasKey] = useState(hasAnyApiKey())
   const [theme, setTheme] = useState<Theme>(getStoredTheme)
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const routerState = useRouterState()
@@ -20,12 +25,12 @@ function CourseLayout() {
   useEffect(() => {
     const unsub = subscribe(() => {
       setProgress(loadProgress())
-      setHasKey(Boolean(loadSettings().apiKey))
+      setHasKey(hasAnyApiKey())
     })
     return unsub
   }, [])
 
-  useEffect(() => setHasKey(Boolean(loadSettings().apiKey)), [routerState.location.pathname])
+  useEffect(() => setHasKey(hasAnyApiKey()), [routerState.location.pathname])
 
   useEffect(() => {
     setSidebarOpen(false)
@@ -35,7 +40,9 @@ function CourseLayout() {
     mainRef.current?.scrollTo(0, 0)
   }, [routerState.location.pathname])
 
-  useEffect(() => { applyTheme(theme) }, [theme])
+  useEffect(() => {
+    applyTheme(theme)
+  }, [theme])
 
   function toggleTheme() {
     const next: Theme = theme === 'dark' ? 'light' : 'dark'
@@ -43,26 +50,34 @@ function CourseLayout() {
     storeTheme(next)
   }
 
-  const total = CONCEPT_GROUPS.reduce((n, g) => n + g.items.length, 0)
-  const done = Object.values(progress).filter((s) => s === 'complete').length
-  const pct = Math.round((done / total) * 100)
+  const total = READY_CONCEPTS.length
+  const done = READY_CONCEPTS.filter((c) => progress[c.id] === 'complete').length
+  const pct = total === 0 ? 0 : Math.round((done / total) * 100)
+
+  const { lesson, prev, next } = useLessonFromPath(routerState.location.pathname)
+  const onLesson = Boolean(lesson)
 
   return (
     <div className="flex h-full">
-      {/* Top bar (mobile only) */}
-      <header className="md:hidden fixed top-0 inset-x-0 z-30 flex items-center justify-between px-4 h-12 border-b border-zinc-800 bg-zinc-950/95 backdrop-blur">
+      {/* Mobile app bar — brand or compact lesson */}
+      <header className="md:hidden fixed top-0 inset-x-0 z-30 flex items-center justify-between px-3 h-12 border-b border-zinc-800 bg-zinc-950/95 backdrop-blur">
         <button
           onClick={() => setSidebarOpen(true)}
-          className="text-zinc-300 text-xl"
+          className="text-zinc-300 text-xl shrink-0 w-9 text-left"
           aria-label="Open menu"
-        >☰</button>
-        <span className="text-[13px] font-medium text-zinc-200">AI Course</span>
-        <button onClick={toggleTheme} className="text-zinc-300 text-base" aria-label="Toggle theme">
+        >
+          ☰
+        </button>
+        <MobileLessonTitle lesson={lesson} />
+        <button
+          onClick={toggleTheme}
+          className="text-zinc-300 text-base shrink-0 w-9 text-right"
+          aria-label="Toggle theme"
+        >
           {theme === 'dark' ? '☀' : '☾'}
         </button>
       </header>
 
-      {/* Sidebar - desktop */}
       <aside className="hidden md:flex w-64 shrink-0 border-r border-zinc-800 bg-zinc-900/50 flex-col">
         <SidebarContent
           done={done}
@@ -75,7 +90,6 @@ function CourseLayout() {
         />
       </aside>
 
-      {/* Sidebar - mobile (overlay) */}
       <AnimatePresence>
         {sidebarOpen && (
           <>
@@ -108,8 +122,8 @@ function CourseLayout() {
         )}
       </AnimatePresence>
 
-      {/* Main content */}
       <main ref={mainRef} className="flex-1 overflow-y-auto scrollbar-thin pt-12 md:pt-0">
+        {onLesson && lesson && <LessonStickyBar lesson={lesson} prev={prev} next={next} />}
         <Outlet />
       </main>
     </div>
@@ -135,7 +149,13 @@ function SidebarContent({
   onToggleTheme: () => void
   onClose?: () => void
 }) {
-  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({ basics: true, genai: true })
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
+    words: true,
+    foundations: true,
+    'building-blocks': true, // bb1 tool calling is ready
+    agents: false,
+    ship: false,
+  })
 
   function toggleGroup(id: string) {
     setOpenGroups((g) => ({ ...g, [id]: !g[id] }))
@@ -145,8 +165,10 @@ function SidebarContent({
     <>
       <div className="p-4 border-b border-zinc-800 flex items-start justify-between">
         <div>
-          <h1 className="text-base font-bold text-zinc-100 tracking-tight">AI Course</h1>
-          <p className="text-[11px] text-zinc-500 mt-0.5">Interactive lessons</p>
+          <Link to="/" className="text-base font-bold text-zinc-100 tracking-tight hover:text-white">
+            AI Native Engineer
+          </Link>
+          <p className="text-[11px] text-zinc-500 mt-0.5">AI for product builders</p>
         </div>
         <div className="flex items-center gap-1">
           <button
@@ -162,15 +184,19 @@ function SidebarContent({
               onClick={onClose}
               className="md:hidden rounded border border-zinc-700 hover:border-zinc-500 px-2 py-1 text-[11px] text-zinc-400"
               aria-label="Close menu"
-            >✕</button>
+            >
+              ✕
+            </button>
           )}
         </div>
       </div>
 
       <div className="p-4 border-b border-zinc-800">
         <div className="flex items-center justify-between mb-1">
-          <span className="text-[11px] text-zinc-500">Progress</span>
-          <span className="text-[11px] text-zinc-400">{done}/{total}</span>
+          <span className="text-[11px] text-zinc-500">Foundations progress</span>
+          <span className="text-[11px] text-zinc-400">
+            {done}/{total}
+          </span>
         </div>
         <div className="h-1.5 rounded-full bg-zinc-800 overflow-hidden">
           <div className="h-full bg-emerald-500 transition-all" style={{ width: `${pct}%` }} />
@@ -179,19 +205,29 @@ function SidebarContent({
 
       <nav className="flex-1 overflow-y-auto scrollbar-thin p-2">
         <SectionItem id="home" title="Home" to="/" />
-        <SectionItem id="settings" title="Settings" to="/settings" indicator={hasKey ? undefined : 'no-key'} />
+        <SectionItem
+          id="settings"
+          title="Settings"
+          to="/settings"
+          indicator={hasKey ? undefined : 'no-key'}
+        />
 
         {CONCEPT_GROUPS.map((group) => (
           <div key={group.id} className="pt-3 mt-1 border-t border-zinc-800/60">
             <button
               onClick={() => toggleGroup(group.id)}
-              className="w-full flex items-center justify-between px-2 py-1 text-[13px] font-semibold uppercase tracking-wider text-zinc-300 hover:text-zinc-100"
+              className="w-full flex items-center justify-between px-2 py-1 text-[12px] font-semibold uppercase tracking-wider text-zinc-300 hover:text-zinc-100"
             >
-              <span>{group.title}{group.items.length > 0 ? ` (${group.items.length})` : ''}</span>
-              <motion.span animate={{ rotate: openGroups[group.id] ? 90 : 0 }} className="text-zinc-500">▸</motion.span>
+              <span>{group.title}</span>
+              <motion.span
+                animate={{ rotate: openGroups[group.id] ? 90 : 0 }}
+                className="text-zinc-500"
+              >
+                ▸
+              </motion.span>
             </button>
             <AnimatePresence initial={false}>
-              {openGroups[group.id] && group.items.length > 0 && (
+              {openGroups[group.id] && (
                 <motion.div
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: 'auto', opacity: 1 }}
@@ -200,27 +236,22 @@ function SidebarContent({
                   className="overflow-hidden"
                 >
                   <div className="pl-3 mt-1 border-l border-zinc-800/60 ml-2 space-y-0.5">
+                    {group.specialPath && (
+                      <SectionItem id={`${group.id}-page`} title="Open glossary" to={group.specialPath} />
+                    )}
                     {group.items.map((c) => (
                       <SectionItem
                         key={c.id}
                         id={c.id}
                         title={c.title}
                         to={`/concept/${c.id}`}
-                        indicator={progress[c.id] ?? 'not-started'}
+                        indicator={
+                          c.availability === 'soon'
+                            ? 'soon'
+                            : (progress[c.id] ?? 'not-started')
+                        }
                       />
                     ))}
-                  </div>
-                </motion.div>
-              )}
-              {openGroups[group.id] && group.items.length === 0 && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  className="overflow-hidden"
-                >
-                  <div className="pl-3 mt-1 border-l border-zinc-800/60 ml-2">
-                    <p className="px-2 py-1 text-[11px] text-zinc-600 italic">Coming soon</p>
                   </div>
                 </motion.div>
               )}
@@ -245,14 +276,17 @@ function SectionItem({
   return (
     <Link
       to={to as any}
-      className="flex items-center justify-between rounded px-2 py-1.5 text-[13px] text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 transition-colors"
+      className="flex items-center justify-between gap-1 rounded px-2 py-1.5 text-[12px] text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 transition-colors"
       activeProps={{ className: 'bg-zinc-800 text-zinc-100' }}
       activeOptions={{ exact: to === '/' }}
     >
-      <span>{title}</span>
-      {indicator === 'complete' && <span className="text-emerald-500 text-xs">●</span>}
-      {indicator === 'in-progress' && <span className="text-amber-500 text-xs">●</span>}
-      {indicator === 'no-key' && <span className="text-red-500 text-xs">⚠</span>}
+      <span className="leading-snug">{title}</span>
+      {indicator === 'complete' && <span className="text-emerald-500 text-xs shrink-0">●</span>}
+      {indicator === 'in-progress' && <span className="text-amber-500 text-xs shrink-0">●</span>}
+      {indicator === 'no-key' && <span className="text-red-500 text-xs shrink-0">⚠</span>}
+      {indicator === 'soon' && (
+        <span className="text-[9px] text-zinc-600 shrink-0 uppercase">soon</span>
+      )}
     </Link>
   )
 }

@@ -3,11 +3,11 @@ import { createFileRoute } from '@tanstack/react-router'
 import { motion } from 'framer-motion'
 import { RagPipeline } from '../../../services/rag'
 import { streamChatCompletion } from '../../../services/streaming'
-import { loadSettings } from '../../../lib/storage'
+import { hasAnyApiKey, resolveTask, setStatus } from '../../../lib/storage'
 import { Quiz } from '../../../components/Quiz'
 import { ConceptNav } from '../../../components/ConceptNav'
-import { CONCEPTS } from '../../../lib/concepts'
-import { setStatus } from '../../../lib/storage'
+import { RagFlowDiagram } from '../../../components/RagFlowDiagram'
+import { getNeighbors, sectionLabel } from '../../../lib/concepts'
 
 export const Route = createFileRoute('/_course/concept/b8')({
   component: B8Page,
@@ -23,9 +23,7 @@ Tatkal tickets can be cancelled only up to 24 hours before the scheduled departu
 
 If you miss a train, file a TDR through the IRCTC TDR portal within 72 hours of departure. Refund processing for TDR cases takes 60 to 90 days.`
 
-const idx = CONCEPTS.findIndex((c) => c.id === 'b8')
-const prev = idx > 0 ? CONCEPTS[idx - 1] : null
-const next = idx < CONCEPTS.length - 1 ? CONCEPTS[idx + 1] : null
+const { prev, next } = getNeighbors('b8')
 
 function B8Page() {
   const [query, setQuery] = useState('How do I cancel my train ticket?')
@@ -38,8 +36,8 @@ function B8Page() {
   const abortRef = useRef<AbortController | null>(null)
   const pipelineRef = useRef<RagPipeline | null>(null)
 
-  const apiKey = loadSettings().apiKey
-  if (!apiKey) {
+  const hasKey = hasAnyApiKey()
+  if (!hasKey) {
     return (
       <div className="max-w-3xl mx-auto px-8 py-10 pb-24">
         <p className="text-[13px] text-red-400">No API key. Add one in Settings.</p>
@@ -82,7 +80,7 @@ function B8Page() {
         { role: 'system', content: 'Answer using only the context below. Cite sources as [1], [2]. Say if you don\'t know.' },
         { role: 'user', content: `Context:\n${context}\n\nQuestion: ${query}` },
       ],
-      loadSettings().model,
+      resolveTask('stream').model,
       ac.signal,
       {
         onToken: (t) => {
@@ -105,26 +103,26 @@ function B8Page() {
   return (
     <div className="max-w-3xl mx-auto px-8 py-10 pb-24">
       <header className="mb-8">
-        <p className="text-[11px] text-zinc-600 uppercase tracking-wider">Basics</p>
-        <h1 className="mt-1 text-2xl font-semibold text-zinc-100">Integration</h1>
+        <p className="text-[11px] text-zinc-600 uppercase tracking-wider">{sectionLabel('foundations')}</p>
+        <h1 className="mt-1 text-2xl font-semibold text-zinc-100">Put it together</h1>
       </header>
 
-      <section className="space-y-4 text-[14px] leading-relaxed text-zinc-300 mb-8">
+      <section className="space-y-4 text-[14px] leading-relaxed text-zinc-300 mb-6">
         <p>
-          You've built each of the 7 concepts individually. Here they all run together:
-          the same document goes through <strong>chunking → embedding → vector search → LLM generation → streaming → logging</strong> in one flow.
+          You built each Foundations piece on its own. Here they run as one system:
+          document → chunk → embed → store → retrieve → prompt → stream → log.
         </p>
-        <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-4 grid grid-cols-2 md:grid-cols-4 gap-2 text-[11px] font-mono text-zinc-400">
-          <span>B4 → Chunking</span>
-          <span>B2/B3 → Embed + Store</span>
-          <span>B3 → Cosine search</span>
-          <span>B1 → Chat completion</span>
-          <span>B5 → System prompt</span>
-          <span>B6 → Streaming</span>
-          <span>B7 → Eval logging</span>
-          <span>→ One answer</span>
-        </div>
       </section>
+
+      <div className="mb-8">
+        <h2 className="text-sm font-semibold text-zinc-100 mb-1">Watch it move</h2>
+        <p className="text-[12px] text-zinc-500 mb-3">
+          Retrieval flow with example queries. Then try the live pipeline below.
+        </p>
+        <RagFlowDiagram />
+      </div>
+
+      <h2 className="text-sm font-semibold text-zinc-100 mb-3">Try the full flow live</h2>
 
       <section className="space-y-4">
         {phase === 'idle' && (

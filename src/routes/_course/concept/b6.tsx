@@ -4,23 +4,21 @@ import { StreamingDemo } from '../../../components/StreamingDemo'
 import { UnderTheHood } from '../../../components/UnderTheHood'
 import { Quiz } from '../../../components/Quiz'
 import { ConceptNav } from '../../../components/ConceptNav'
-import { CONCEPTS } from '../../../lib/concepts'
+import { getNeighbors, sectionLabel } from '../../../lib/concepts'
 import { setStatus } from '../../../lib/storage'
 
 export const Route = createFileRoute('/_course/concept/b6')({
   component: B6Page,
 })
 
-const idx = CONCEPTS.findIndex((c) => c.id === 'b6')
-const prev = idx > 0 ? CONCEPTS[idx - 1] : null
-const next = idx < CONCEPTS.length - 1 ? CONCEPTS[idx + 1] : null
+const { prev, next } = getNeighbors('b6')
 
 function B6Page() {
   return (
     <div className="max-w-3xl mx-auto px-8 py-10 pb-24">
       <header className="mb-8">
-        <p className="text-[11px] text-zinc-600 uppercase tracking-wider">Basics</p>
-        <h1 className="mt-1 text-2xl font-semibold text-zinc-100">Streaming + UI</h1>
+        <p className="text-[11px] text-zinc-600 uppercase tracking-wider">{sectionLabel('foundations')}</p>
+        <h1 className="mt-1 text-2xl font-semibold text-zinc-100">Streaming in the UI</h1>
       </header>
 
       <section className="space-y-4 text-[14px] leading-relaxed text-zinc-300">

@@ -11,7 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as CourseRouteImport } from './routes/_course'
 import { Route as CourseIndexRouteImport } from './routes/_course/index'
+import { Route as CourseWordsRouteImport } from './routes/_course/words'
 import { Route as CourseSettingsRouteImport } from './routes/_course/settings'
+import { Route as CourseConceptBb1RouteImport } from './routes/_course/concept/bb1'
 import { Route as CourseConceptB8RouteImport } from './routes/_course/concept/b8'
 import { Route as CourseConceptB7RouteImport } from './routes/_course/concept/b7'
 import { Route as CourseConceptB6RouteImport } from './routes/_course/concept/b6'
@@ -20,6 +22,7 @@ import { Route as CourseConceptB4RouteImport } from './routes/_course/concept/b4
 import { Route as CourseConceptB3RouteImport } from './routes/_course/concept/b3'
 import { Route as CourseConceptB2RouteImport } from './routes/_course/concept/b2'
 import { Route as CourseConceptB1RouteImport } from './routes/_course/concept/b1'
+import { Route as CourseConceptConceptIdRouteImport } from './routes/_course/concept/$conceptId'
 
 const CourseRoute = CourseRouteImport.update({
   id: '/_course',
@@ -30,9 +33,19 @@ const CourseIndexRoute = CourseIndexRouteImport.update({
   path: '/',
   getParentRoute: () => CourseRoute,
 } as any)
+const CourseWordsRoute = CourseWordsRouteImport.update({
+  id: '/words',
+  path: '/words',
+  getParentRoute: () => CourseRoute,
+} as any)
 const CourseSettingsRoute = CourseSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => CourseRoute,
+} as any)
+const CourseConceptBb1Route = CourseConceptBb1RouteImport.update({
+  id: '/concept/bb1',
+  path: '/concept/bb1',
   getParentRoute: () => CourseRoute,
 } as any)
 const CourseConceptB8Route = CourseConceptB8RouteImport.update({
@@ -75,10 +88,17 @@ const CourseConceptB1Route = CourseConceptB1RouteImport.update({
   path: '/concept/b1',
   getParentRoute: () => CourseRoute,
 } as any)
+const CourseConceptConceptIdRoute = CourseConceptConceptIdRouteImport.update({
+  id: '/concept/$conceptId',
+  path: '/concept/$conceptId',
+  getParentRoute: () => CourseRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof CourseIndexRoute
   '/settings': typeof CourseSettingsRoute
+  '/words': typeof CourseWordsRoute
+  '/concept/$conceptId': typeof CourseConceptConceptIdRoute
   '/concept/b1': typeof CourseConceptB1Route
   '/concept/b2': typeof CourseConceptB2Route
   '/concept/b3': typeof CourseConceptB3Route
@@ -87,10 +107,13 @@ export interface FileRoutesByFullPath {
   '/concept/b6': typeof CourseConceptB6Route
   '/concept/b7': typeof CourseConceptB7Route
   '/concept/b8': typeof CourseConceptB8Route
+  '/concept/bb1': typeof CourseConceptBb1Route
 }
 export interface FileRoutesByTo {
   '/settings': typeof CourseSettingsRoute
+  '/words': typeof CourseWordsRoute
   '/': typeof CourseIndexRoute
+  '/concept/$conceptId': typeof CourseConceptConceptIdRoute
   '/concept/b1': typeof CourseConceptB1Route
   '/concept/b2': typeof CourseConceptB2Route
   '/concept/b3': typeof CourseConceptB3Route
@@ -99,12 +122,15 @@ export interface FileRoutesByTo {
   '/concept/b6': typeof CourseConceptB6Route
   '/concept/b7': typeof CourseConceptB7Route
   '/concept/b8': typeof CourseConceptB8Route
+  '/concept/bb1': typeof CourseConceptBb1Route
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_course': typeof CourseRouteWithChildren
   '/_course/settings': typeof CourseSettingsRoute
+  '/_course/words': typeof CourseWordsRoute
   '/_course/': typeof CourseIndexRoute
+  '/_course/concept/$conceptId': typeof CourseConceptConceptIdRoute
   '/_course/concept/b1': typeof CourseConceptB1Route
   '/_course/concept/b2': typeof CourseConceptB2Route
   '/_course/concept/b3': typeof CourseConceptB3Route
@@ -113,12 +139,15 @@ export interface FileRoutesById {
   '/_course/concept/b6': typeof CourseConceptB6Route
   '/_course/concept/b7': typeof CourseConceptB7Route
   '/_course/concept/b8': typeof CourseConceptB8Route
+  '/_course/concept/bb1': typeof CourseConceptBb1Route
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/settings'
+    | '/words'
+    | '/concept/$conceptId'
     | '/concept/b1'
     | '/concept/b2'
     | '/concept/b3'
@@ -127,10 +156,13 @@ export interface FileRouteTypes {
     | '/concept/b6'
     | '/concept/b7'
     | '/concept/b8'
+    | '/concept/bb1'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/settings'
+    | '/words'
     | '/'
+    | '/concept/$conceptId'
     | '/concept/b1'
     | '/concept/b2'
     | '/concept/b3'
@@ -139,11 +171,14 @@ export interface FileRouteTypes {
     | '/concept/b6'
     | '/concept/b7'
     | '/concept/b8'
+    | '/concept/bb1'
   id:
     | '__root__'
     | '/_course'
     | '/_course/settings'
+    | '/_course/words'
     | '/_course/'
+    | '/_course/concept/$conceptId'
     | '/_course/concept/b1'
     | '/_course/concept/b2'
     | '/_course/concept/b3'
@@ -152,6 +187,7 @@ export interface FileRouteTypes {
     | '/_course/concept/b6'
     | '/_course/concept/b7'
     | '/_course/concept/b8'
+    | '/_course/concept/bb1'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -174,11 +210,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CourseIndexRouteImport
       parentRoute: typeof CourseRoute
     }
+    '/_course/words': {
+      id: '/_course/words'
+      path: '/words'
+      fullPath: '/words'
+      preLoaderRoute: typeof CourseWordsRouteImport
+      parentRoute: typeof CourseRoute
+    }
     '/_course/settings': {
       id: '/_course/settings'
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof CourseSettingsRouteImport
+      parentRoute: typeof CourseRoute
+    }
+    '/_course/concept/bb1': {
+      id: '/_course/concept/bb1'
+      path: '/concept/bb1'
+      fullPath: '/concept/bb1'
+      preLoaderRoute: typeof CourseConceptBb1RouteImport
       parentRoute: typeof CourseRoute
     }
     '/_course/concept/b8': {
@@ -237,12 +287,21 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CourseConceptB1RouteImport
       parentRoute: typeof CourseRoute
     }
+    '/_course/concept/$conceptId': {
+      id: '/_course/concept/$conceptId'
+      path: '/concept/$conceptId'
+      fullPath: '/concept/$conceptId'
+      preLoaderRoute: typeof CourseConceptConceptIdRouteImport
+      parentRoute: typeof CourseRoute
+    }
   }
 }
 
 interface CourseRouteChildren {
   CourseSettingsRoute: typeof CourseSettingsRoute
+  CourseWordsRoute: typeof CourseWordsRoute
   CourseIndexRoute: typeof CourseIndexRoute
+  CourseConceptConceptIdRoute: typeof CourseConceptConceptIdRoute
   CourseConceptB1Route: typeof CourseConceptB1Route
   CourseConceptB2Route: typeof CourseConceptB2Route
   CourseConceptB3Route: typeof CourseConceptB3Route
@@ -251,11 +310,14 @@ interface CourseRouteChildren {
   CourseConceptB6Route: typeof CourseConceptB6Route
   CourseConceptB7Route: typeof CourseConceptB7Route
   CourseConceptB8Route: typeof CourseConceptB8Route
+  CourseConceptBb1Route: typeof CourseConceptBb1Route
 }
 
 const CourseRouteChildren: CourseRouteChildren = {
   CourseSettingsRoute: CourseSettingsRoute,
+  CourseWordsRoute: CourseWordsRoute,
   CourseIndexRoute: CourseIndexRoute,
+  CourseConceptConceptIdRoute: CourseConceptConceptIdRoute,
   CourseConceptB1Route: CourseConceptB1Route,
   CourseConceptB2Route: CourseConceptB2Route,
   CourseConceptB3Route: CourseConceptB3Route,
@@ -264,6 +326,7 @@ const CourseRouteChildren: CourseRouteChildren = {
   CourseConceptB6Route: CourseConceptB6Route,
   CourseConceptB7Route: CourseConceptB7Route,
   CourseConceptB8Route: CourseConceptB8Route,
+  CourseConceptBb1Route: CourseConceptBb1Route,
 }
 
 const CourseRouteWithChildren =

@@ -1,269 +1,236 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { motion, AnimatePresence } from 'framer-motion'
-import { useState } from 'react'
-import { RagFlowDiagram } from '@/components/RagFlowDiagram'
+import { motion } from 'framer-motion'
 import { StickyCta } from '@/components/StickyCta'
-import { loadSettings } from '@/lib/storage'
+import { BRAND, BUILD_EXAMPLES } from '@/lib/brand'
+import { hasAnyApiKey } from '@/lib/storage'
 
 export const Route = createFileRoute('/_course/')({
   component: HomePage,
 })
 
-const AI_BRANCHES = [
-  {
-    name: 'Generative AI',
-    desc: 'LLMs that generate text: chat, RAG, summarisation, code.',
-    yourJob: 'Your lane',
-    color: 'emerald' as const,
-    readMore: null,
-    link: '/concept/b1',
-  },
-  {
-    name: 'Agentic AI',
-    desc: 'LLMs that call tools and plan multi-step tasks. The frontier.',
-    yourJob: 'Next step',
-    color: 'emerald' as const,
-    readMore: null,
-    link: null,
-  },
-  {
-    name: 'Fine-tuning',
-    desc: 'Retraining a model on your data. Expensive, rarely needed.',
-    yourJob: 'Rarely',
-    color: 'amber' as const,
-    readMore: 'Fine-tuning means taking a pre-trained model and running extra training on your company\'s data so it permanently changes its behavior. It costs thousands of dollars, takes weeks, and the model can forget what it already knew. When non-technical people hear "can we train it on our data?" they imagine fine-tuning. Your job is to steer them to RAG first (much cheaper, no training, data stays in Postgres). Fine-tuning is only worth it after you\'ve hit the ceiling of what RAG + prompt design can do.',
-    link: null,
-  },
-  {
-    name: 'GenAI · Multimodal',
-    desc: 'Image, audio, video models — DALL-E, Whisper, Sora.',
-    yourJob: 'Sometimes',
-    color: 'sky' as const,
-    readMore: 'If your product captures voice or images, you\'ll call the same kind of API as you do for text — fetch + JSON in/out. Whisper converts speech to text (great for WhatsApp voice notes). DALL-E generates images. Vision models can extract text from a scanned document. The skill you\'ve learned (calling an API, handling the response in TypeScript) transfers directly. The only difference is the endpoint URL and the size of the payload.',
-    link: null,
-  },
-  {
-    name: 'Deep Learning',
-    desc: 'Neural networks that power everything modern in AI.',
-    yourJob: 'Not your job',
-    color: 'zinc' as const,
-    readMore: 'Deep learning is what powers every modern AI product you use — autocomplete in Gmail, voice search on Google, object detection in Google Photos. The "transformer" you hear about is a specific neural network design from 2017 that made ChatGPT possible. You don\'t train these (they need clusters of expensive GPUs). But knowing that they consume huge amounts of text and compute explains why teams use pre-trained APIs rather than training their own — even at a company with deep pockets.',
-    link: null,
-  },
-  {
-    name: 'Classical ML',
-    desc: 'Predictions from structured data — spam, fraud, prices.',
-    yourJob: 'Not your job',
-    color: 'zinc' as const,
-    readMore: 'Classical ML models learn patterns from labeled data. If you have a table of past loans and outcomes, a model can predict whether a new applicant will default. You already interact with these when your Node API calls a prediction endpoint — the model returns a score, you return a decision. You don\'t build the model, but knowing the difference between a classification model (spam / not spam) and a regression model (house price = $X) helps you ask the data team the right questions when designing the API.',
-    link: null,
-  },
-  {
-    name: 'MLOps',
-    desc: 'Serving models at scale — GPUs, servers, optimisation.',
-    yourJob: 'Not your job',
-    color: 'zinc' as const,
-    readMore: 'MLOps is the operational side — keeping a model server running, handling traffic spikes, quantizing models to make them smaller and faster. If your company serves its own LLM (not through OpenAI), someone is doing MLOps. You don\'t need to do it yourself because your path is calling APIs over the network, not hosting a GPU server. But knowing MLOps exists saves you from accidentally volunteering to "own the model deployment" in a meeting. That\'s a different team.',
-    link: null,
-  },
-]
+const STATUS_LABEL: Record<(typeof BUILD_EXAMPLES)[number]['status'], string> = {
+  foundations: 'Foundations',
+  'building-blocks': 'Building blocks',
+  agents: 'Agents',
+  ship: 'Ship it',
+}
 
-const PHASES = [
-  { title: 'Ingest', plain: 'Read documents & split them into chunks.', detail: 'Why chunks: the LLM context window is finite, and smaller chunks give more focused embeddings.', concept: 'b4', label: 'RAG Pipeline' },
-  { title: 'Embed', plain: 'Turn each chunk into a list of numbers (a vector).', detail: 'Same idea → vectors close in 1536-dim space. Different idea → far apart.', concept: 'b2', label: 'Embeddings' },
-  { title: 'Store', plain: 'Save text + vector together in a vector database.', detail: 'pgvector, Qdrant, Pinecone. Retrieve by nearest neighbour, not exact match.', concept: 'b3', label: 'Vector Databases' },
-  { title: 'Retrieve', plain: 'User query → embed → cosine rank → top-k chunks.', detail: 'This is the "R" in RAG. Done right, you get the most relevant context.', concept: 'b4', label: 'RAG Pipeline' },
-  { title: 'Generate', plain: 'Stuff top-k chunks + user question into a chat prompt.', detail: 'LLM answers grounded in retrieved docs. This is the "G" in RAG.', concept: 'b6', label: 'Streaming + UI' },
-  { title: 'Agentify', plain: 'Wrap retrieval as a tool the LLM calls autonomously.', detail: 'Plan → call tool → observe → repeat. Multi-step research, automatically.', concept: null, label: 'Phase C · Agents (later)' },
+const PATH = [
+  {
+    name: 'Foundations',
+    desc: 'Models, search, RAG, prompts, streaming, tests.',
+    status: 'Open',
+    open: true,
+  },
+  {
+    name: 'Building blocks',
+    desc: 'Tool calling open. More lessons next.',
+    status: 'Open',
+    open: true,
+  },
+  {
+    name: 'Agents',
+    desc: 'Multi step when one call is not enough.',
+    status: 'Later',
+    open: false,
+  },
+  {
+    name: 'Ship it',
+    desc: 'Evals, cost, fit in your app.',
+    status: 'Later',
+    open: false,
+  },
 ]
 
 function HomePage() {
-  const hasKey = Boolean(loadSettings().apiKey)
-  const [diagramOpen, setDiagramOpen] = useState(false)
-  const [expandedBranch, setExpandedBranch] = useState<string | null>(null)
+  const hasKey = hasAnyApiKey()
 
   return (
-    <div className="max-w-4xl mx-auto px-6 md:px-8 py-10">
-
-      {/* Hero */}
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mb-10">
-        <h1 className="text-3xl md:text-4xl font-bold text-zinc-100 leading-tight tracking-tight">
-          AI, explained for engineers
+    <div className="max-w-2xl mx-auto px-6 md:px-8 py-10 md:py-14 pb-24">
+      {/* 1. Hero */}
+      <motion.header
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-12"
+      >
+        <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-emerald-500/90 mb-3">
+          {BRAND.tagline}
+        </p>
+        <h1 className="text-3xl sm:text-4xl font-bold text-zinc-100 leading-[1.15] tracking-tight">
+          {BRAND.name}
         </h1>
-        <p className="mt-3 text-[15px] text-zinc-400 max-w-2xl leading-relaxed">
-          Modern AI   in plain TypeScript. Buzzwords, patterns, real API calls. Built for engineers who want to ship AI features into products they already build.
-        </p>
-        <p className="mt-2 text-[13px] text-emerald-400/80">
-          Every lesson is a live demo   real OpenAI API call, real cost, real behavior. No mocks.
-        </p>
-        <div className="mt-4 flex flex-wrap gap-3 items-center">
-          <StickyCta to="/concept/b1" label="Start with Basics" />
-          {!hasKey && (
-            <div className="flex items-center gap-2">
-              <Link
-                to="/settings"
-                className="rounded border border-amber-500/40 bg-amber-500/5 px-4 py-2 text-[13px] text-amber-200 hover:bg-amber-500/10"
-              >
-                Add OpenAI API key first
-              </Link>
-              <div className="relative group">
-                <span className="text-zinc-500 text-sm cursor-help">ⓘ</span>
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 px-3 py-2 rounded-lg border border-zinc-700 bg-zinc-900 text-[11px] text-zinc-400 leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl">
-                  Your key is stored only in your browser's localStorage. It's never sent to any server except OpenAI's API. Safe for learning   not production-grade.
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </motion.div>
+        <p className="mt-4 text-[15px] text-zinc-400 leading-relaxed">{BRAND.promise}</p>
+        <p className="mt-2 text-[13px] text-zinc-500 leading-relaxed">{BRAND.sub}</p>
 
-      {/* AI engineering map */}
-      <motion.div
-        initial={{ opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="mb-14"
-      >
-        <h2 className="text-sm font-semibold text-zinc-300 mb-1">The AI engineering map</h2>
-        <p className="text-[12px] text-zinc-500 mb-5">You don't need to learn all of AI. Two slices are your lane   the rest, you just need to know exists.</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {AI_BRANCHES.map((branch, i) => {
-            const isLane = branch.color === 'emerald'
-            return (
-              <motion.div
-                key={branch.name}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 + i * 0.05 }}
-                className={`rounded-lg border px-4 py-3 ${
-                  isLane ? 'border-emerald-600/40 bg-emerald-600/5' : 'border-zinc-800 bg-zinc-900/30'
-                }`}
-              >
-                <div className="flex items-center justify-between mb-1">
-                  <h3 className={`text-[14px] font-semibold ${isLane ? 'text-emerald-300' : 'text-zinc-300'}`}>
-                    {branch.name}
-                  </h3>
-                  <span
-                    className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${
-                      branch.color === 'emerald'
-                        ? 'bg-emerald-600/20 text-emerald-300'
-                        : branch.color === 'sky'
-                          ? 'bg-sky-600/20 text-sky-300'
-                          : branch.color === 'amber'
-                            ? 'bg-amber-600/20 text-amber-300'
-                            : 'bg-zinc-700/40 text-zinc-500'
-                    }`}
-                  >
-                    {branch.yourJob}
-                  </span>
-                </div>
-                {branch.desc && (
-                  <p className="text-[12px] text-zinc-400 leading-relaxed mb-2">{branch.desc}</p>
-                )}
-                {branch.link && (
-                  <Link to={branch.link as any} className="inline-block text-[12px] text-emerald-400 hover:text-emerald-300">
-                    → Start here
-                  </Link>
-                )}
-                {branch.readMore && (
-                  <div className="mt-1">
-                    <button
-                      onClick={() => setExpandedBranch(expandedBranch === branch.name ? null : branch.name)}
-                      className="inline-block text-[12px] text-zinc-500 hover:text-zinc-300 underline underline-offset-2"
-                    >
-                      {expandedBranch === branch.name ? 'Read less' : 'Read more'}
-                    </button>
-                    <AnimatePresence>
-                      {expandedBranch === branch.name && (
-                        <motion.p
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.15 }}
-                          className="overflow-hidden text-[11.5px] text-zinc-500 leading-relaxed mt-2"
-                        >
-                          {branch.readMore}
-                        </motion.p>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                )}
-              </motion.div>
-            )
-          })}
-        </div>
-      </motion.div>
+        <StickyCta to="/concept/b1" label="Start Foundations" />
 
-      {/* The pipeline phases */}
-      <motion.div
-        initial={{ opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="mb-14"
-      >
-        <h2 className="text-sm font-semibold text-zinc-300 mb-1">The pipeline, in 6 phases</h2>
-        <p className="text-[12px] text-zinc-500 mb-5">Every AI feature you'll ever build maps to stages 1-5. Stage 6 is the jump to agents.</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {PHASES.map((p, i) => (
-            <motion.div
-              key={p.title}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.25 + i * 0.06 }}
-              className="rounded-lg border border-zinc-800 bg-zinc-900/50 px-4 py-3 hover:border-zinc-700 transition-colors"
+        <div className="mt-3 flex items-center gap-1.5">
+          <Link
+            to="/settings"
+            className="rounded border border-amber-500/50 bg-amber-500/5 px-2.5 py-1 text-[11px] text-amber-300 hover:bg-amber-500/10 hover:border-amber-400/60 transition-colors"
+          >
+            {hasKey ? 'API keys' : 'Add API keys'}
+          </Link>
+          <div className="relative group">
+            <span
+              className="text-amber-300 text-[12px] cursor-help leading-none select-none"
+              aria-label="About API keys"
             >
-              <div className="flex items-start gap-3">
-                <span className="font-mono text-xl font-light text-zinc-700 mt-0.5">{i + 1}</span>
-                <div className="flex-1">
-                  <h3 className="text-[14px] font-semibold text-zinc-200">{p.title}</h3>
-                  <p className="text-[13px] text-zinc-400 mt-0.5">{p.plain}</p>
-                  <p className="text-[11px] text-zinc-600 mt-1.5">{p.detail}</p>
-                  {p.concept ? (
-                    <Link to={`/concept/${p.concept}` as any} className="inline-block mt-2 text-[11px] text-emerald-400 hover:text-emerald-300">
-                      → {p.label}
-                    </Link>
-                  ) : (
-                    <span className="inline-block mt-2 text-[11px] text-zinc-600">{p.label}</span>
-                  )}
-                </div>
+              ⓘ
+            </span>
+            <div className="absolute bottom-full left-0 mb-2 w-64 px-3 py-2 rounded-lg border border-zinc-700 bg-zinc-900 text-[11px] text-zinc-400 leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl">
+              OpenAI and/or xAI keys for live demos. Stored only in this browser. Never sent to
+              our server. Fine for learning; real apps use a backend proxy.
+            </div>
+          </div>
+        </div>
+      </motion.header>
+
+      {/* 2. How each lesson works */}
+      <motion.section
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.05 }}
+        className="mb-12"
+      >
+        <h2 className="text-sm font-semibold text-zinc-100 mb-3">How each lesson works</h2>
+        <ol className="grid grid-cols-2 gap-2 text-[12px]">
+          {[
+            ['1. Read', 'Simple idea, developer English'],
+            ['2. Try live', 'Real API call, tokens and cost'],
+            ['3. See code', 'What your app would use'],
+            ['4. Check', 'Short quiz so it sticks'],
+          ].map(([t, d]) => (
+            <li
+              key={t}
+              className="rounded-lg border border-zinc-800 bg-zinc-900/40 px-3 py-2.5"
+            >
+              <span className="block font-medium text-zinc-200">{t}</span>
+              <span className="text-zinc-500">{d}</span>
+            </li>
+          ))}
+        </ol>
+      </motion.section>
+
+      {/* 3. The path — small cards */}
+      <motion.section
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.08 }}
+        className="mb-12"
+      >
+        <h2 className="text-sm font-semibold text-zinc-100 mb-1">The path</h2>
+        <p className="text-[12px] text-zinc-500 mb-4">
+          Full list is in the sidebar. Foundations is open now.
+        </p>
+        <div className="grid grid-cols-2 gap-2">
+          {PATH.map((row, i) => (
+            <motion.div
+              key={row.name}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.08 + i * 0.03 }}
+              className={`rounded-xl border px-3 py-3 min-h-[5.5rem] flex flex-col ${
+                row.open
+                  ? 'border-emerald-500/35 bg-emerald-500/[0.07]'
+                  : 'border-zinc-800 bg-zinc-900/35'
+              }`}
+            >
+              <div className="flex items-start justify-between gap-1 mb-1">
+                <span className="text-[13px] font-semibold text-zinc-100 leading-snug">
+                  {row.name}
+                </span>
+                <span
+                  className={`text-[9px] uppercase tracking-wide shrink-0 mt-0.5 ${
+                    row.open ? 'text-emerald-400' : 'text-zinc-600'
+                  }`}
+                >
+                  {row.status}
+                </span>
               </div>
+              <p className="text-[11px] text-zinc-500 leading-snug mt-auto">{row.desc}</p>
             </motion.div>
           ))}
         </div>
-      </motion.div>
+      </motion.section>
 
-      {/* Watch it move (collapsible) */}
-      <motion.div
+      {/* 4. What you will build — small cards */}
+      <motion.section
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="mb-14"
+        transition={{ delay: 0.1 }}
+        className="mb-12"
       >
-        <button
-          onClick={() => setDiagramOpen((o) => !o)}
-          className="w-full flex items-center justify-between text-left"
-        >
-          <div>
-            <h2 className="text-sm font-semibold text-zinc-300">Watch it move</h2>
-            <p className="text-[12px] text-zinc-500 mt-0.5">The full RAG retrieval flow animated with 3 example queries</p>
-          </div>
-          <motion.span animate={{ rotate: diagramOpen ? 180 : 0 }} className="text-zinc-500 text-lg pr-2">
-            ▾
-          </motion.span>
-        </button>
-        {diagramOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            transition={{ duration: 0.2 }}
-            className="overflow-hidden"
-          >
-            <div className="mt-4">
-              <RagFlowDiagram />
-            </div>
-          </motion.div>
-        )}
-      </motion.div>
+        <h2 className="text-sm font-semibold text-zinc-100 mb-1">What you will build</h2>
+        <p className="text-[12px] text-zinc-500 mb-4 leading-relaxed">
+          QuickBite food delivery support (Zomato / Swiggy style). Same world, different skills.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {BUILD_EXAMPLES.map((ex, i) => (
+            <motion.article
+              key={ex.title}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 + i * 0.03 }}
+              className="rounded-xl border border-zinc-800 bg-zinc-900/40 px-3 py-3 flex flex-col"
+            >
+              <div className="flex items-start justify-between gap-2 mb-1.5">
+                <h3 className="text-[12.5px] font-semibold text-zinc-100 leading-snug">
+                  {ex.title}
+                </h3>
+                <span className="text-[9px] uppercase tracking-wide text-zinc-600 shrink-0">
+                  {STATUS_LABEL[ex.status]}
+                </span>
+              </div>
+              <p className="text-[11px] text-zinc-400 italic leading-snug line-clamp-2">
+                {ex.scene}
+              </p>
+              <p className="mt-1.5 text-[11px] text-zinc-500 leading-snug line-clamp-2">
+                {ex.youBuild}
+              </p>
+              <div className="mt-2 flex flex-wrap gap-1">
+                {ex.concepts.slice(0, 3).map((c) => (
+                  <span
+                    key={c}
+                    className="text-[9px] rounded border border-zinc-800 bg-zinc-950/60 px-1.5 py-0.5 text-zinc-500"
+                  >
+                    {c}
+                  </span>
+                ))}
+              </div>
+            </motion.article>
+          ))}
+        </div>
+      </motion.section>
+
+      {/* 5. Who */}
+      <motion.section
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.14 }}
+        className="mb-10 grid grid-cols-1 sm:grid-cols-2 gap-3 text-[12px]"
+      >
+        <div className="rounded-lg border border-zinc-800 px-3.5 py-3">
+          <p className="font-medium text-zinc-200 mb-1.5">For you if</p>
+          <ul className="text-zinc-500 space-y-1 list-disc ml-4">
+            <li>You ship product features</li>
+            <li>You want solid AI basics, not hype</li>
+            <li>You learn better by trying than watching</li>
+          </ul>
+        </div>
+        <div className="rounded-lg border border-zinc-800 px-3.5 py-3">
+          <p className="font-medium text-zinc-200 mb-1.5">Not for</p>
+          <ul className="text-zinc-500 space-y-1 list-disc ml-4">
+            <li>Training your own LLM</li>
+            <li>Research paper depth</li>
+            <li>Prompt tips with no system picture</li>
+          </ul>
+        </div>
+      </motion.section>
+
+      <p className="text-[11px] text-zinc-600 leading-relaxed">
+        Demos run in your browser with your keys (OpenAI and/or xAI). Fine for learning.
+      </p>
     </div>
   )
 }

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { loadSettings } from '../lib/storage'
+import { hasAnyApiKey } from '../lib/storage'
 import { useCompletion } from '../hooks/useCompletion'
 import type { ChatMessage } from '../services/openai'
 
@@ -16,12 +16,12 @@ export function CompletionDemo() {
 
   const { data, isFetching, error, refetch } = useCompletion(messages, triggered)
 
-  const apiKey = loadSettings().apiKey
-  if (!apiKey) {
+  const hasKey = hasAnyApiKey()
+  if (!hasKey) {
     return (
       <div className="rounded-lg border border-red-500/30 bg-red-500/5 px-5 py-4 my-6">
         <p className="text-[13px] text-red-200">
-          No API key set. Add your OpenAI key in <a href="/settings" className="underline">Settings</a>.
+          Add an API key in <a href="/settings" className="underline">Settings</a>.
         </p>
       </div>
     )

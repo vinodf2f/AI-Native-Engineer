@@ -1,19 +1,45 @@
-# AI Concept Map
+# AI Native Engineer
 
-Interactive AI-engineering course — learn by running real OpenAI API calls, not watching videos.
+**AI for product builders**
 
-**Live:** [ai-concept-map-ten.vercel.app](https://ai-concept-map-ten.vercel.app)
+Interactive course for engineers who ship apps. You build the pieces yourself with live API calls, see real cost, and get a clear picture of how AI features work.
+
+For product people, not model trainers.
+
+**Live:** [ai-concept-map-ten.vercel.app](https://ai-concept-map-ten.vercel.app)  
 **Repo:** [github.com/vinodf2f/ai-concept-map](https://github.com/vinodf2f/ai-concept-map)
 
-## What this is
+## Who it is for
 
-A self-paced, interactive course that teaches you how to build production AI features — one concept at a time. Every lesson follows the same pattern: **learn (animated)** → **try live (real OpenAI call)** → **under the hood (real code)** → **checkpoint quiz**.
+- Frontend / full-stack / product engineers
+- People who ship apps and want solid AI basics
+- Builders who learn by trying, not only watching
 
-No mocks. Every demo makes a real API call. You see real tokens, real cost, real model behavior.
+Not for: training LLMs, research papers, prompt tips with no system picture.
+
+## What you build (QuickBite world)
+
+| Build | Real scene | Ideas |
+|-------|------------|--------|
+| Help bot on policy | "Wrong item, refund?" | RAG, embeddings, prompts |
+| Extract clean JSON | Ticket or invoice text | Structured output |
+| Bot checks an order | getOrder / refund tools | Tool calling |
+| Multi step support | Policy + tools + handoff | Agents |
+| Catch bad prompt changes | Friday ship, Monday fail | Evals |
+
+## Path
+
+| Section | What |
+|---------|------|
+| **AI words** | Industry lines in plain English |
+| **Foundations** | Tokens, embeddings, RAG, prompts, streaming, evals (ready) |
+| **Building blocks** | Tools, structured output, keys, LangChain map |
+| **Agents** | Multi step when one call is not enough |
+| **Ship it** | Evals, cost, where AI fits in your app |
 
 ## Stack
 
-Vite · React · TypeScript · TanStack Router · TanStack Query · Tailwind CSS · Framer Motion · OpenAI API
+Vite · React · TypeScript · TanStack Router · TanStack Query · Tailwind · Framer Motion · OpenAI / xAI
 
 ## Run locally
 
@@ -21,56 +47,11 @@ Vite · React · TypeScript · TanStack Router · TanStack Query · Tailwind CSS
 git clone https://github.com/vinodf2f/ai-concept-map.git
 cd ai-concept-map
 npm install
-npm run dev          # http://localhost:5173
+npm run dev
 ```
 
-## First-time setup
-
-1. Get a pay-as-you-go OpenAI API key at [platform.openai.com](https://platform.openai.com) (~$5 credit lasts weeks for this course).
-2. Open the site → **Settings** → paste your key.
-3. Your key is stored **only in your browser's localStorage**. It never goes to any server except OpenAI's API. No backend, no database, no telemetry.
-
-## Concepts covered
-
-### Basics
-1. **LLM Mental Model** — tokens, context window, system/user/assistant roles, real completion call
-2. **Embeddings** — meaning as coordinates, cosine similarity from scratch, live vector comparison
-3. **Vector Databases** — pgvector, ANN indexes, in-browser vector store demo
-4. **RAG Pipeline** — chunking strategies, grounded answers with citations, live IRCTC demo
-5. **Prompt Engineering** — system prompts, few-shot, structured JSON output, live prompt lab
-6. **Streaming + UI** — SSE token streaming, AbortController cancel, live streaming demo
-7. **Evaluation** — keyword + semantic scoring, eval suites, regression detection
-
-### Generative AI (in progress)
-8. Sentiment Analysis · 9. Summarisation · 10. Translation · 11. Image Generation · 12. Function Calling
-
-## Project structure
-
-```
-src/
-  routes/
-    __root.tsx                  # Router root
-    _course.tsx                 # Layout: sidebar, theme toggle, mobile drawer
-    _course/
-      index.tsx                 # Home (concept map + animated RAG flow)
-      settings.tsx              # API key + model settings
-      concept/
-        b1-b7.tsx               # Basics concept pages
-  components/                   # Reusable UI (Quiz, Callout, demos, CodeBlock)
-  services/                     # API layer (openai, embeddings, vectorStore, rag, streaming, eval)
-  hooks/                        # TanStack Query wrappers
-  lib/                          # storage, theme, concepts
-```
-
-## What you learn by building this
-
-- TanStack Router file-based routing with type-safe routes
-- TanStack Query for live API calls (loading / error / cache states)
-- Real OpenAI API usage: chat completions, embeddings, streaming, cost literacy
-- localStorage for offline settings & progress tracking
-- Dark/light theme with CSS variables + Tailwind
-- Mobile-first responsive design with slide-in drawer
+Add keys in **Settings** (browser localStorage only).
 
 ## License
 
-MIT — fork it, teach with it, build your own course.
+MIT

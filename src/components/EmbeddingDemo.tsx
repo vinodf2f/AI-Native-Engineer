@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useEmbedding } from '../hooks/useEmbedding'
 import { cosineSimilarity } from '../services/embeddings'
-import { loadSettings } from '../lib/storage'
+import { hasAnyApiKey } from '../lib/storage'
 import { EmbeddingScatter } from './EmbeddingScatter'
 
 const DEFAULT_A = 'How do I get a refund for a cancelled train?'
@@ -17,12 +17,12 @@ export function EmbeddingDemo() {
   const embA = useEmbedding(submittedA, Boolean(submittedA))
   const embB = useEmbedding(submittedB, Boolean(submittedB))
 
-  const apiKey = loadSettings().apiKey
-  if (!apiKey) {
+  const hasKey = hasAnyApiKey()
+  if (!hasKey) {
     return (
       <div className="rounded-lg border border-red-500/30 bg-red-500/5 px-5 py-4 my-6">
         <p className="text-[13px] text-red-200">
-          No API key set. Add your OpenAI key in <a href="/settings" className="underline">Settings</a>.
+          Add an API key in <a href="/settings" className="underline">Settings</a>.
         </p>
       </div>
     )

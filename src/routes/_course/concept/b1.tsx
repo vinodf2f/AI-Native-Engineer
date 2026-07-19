@@ -6,23 +6,21 @@ import { CompletionDemo } from '../../../components/CompletionDemo'
 import { UnderTheHood } from '../../../components/UnderTheHood'
 import { Quiz } from '../../../components/Quiz'
 import { ConceptNav } from '../../../components/ConceptNav'
-import { CONCEPTS } from '../../../lib/concepts'
+import { getNeighbors, sectionLabel } from '../../../lib/concepts'
 import { setStatus } from '../../../lib/storage'
 
 export const Route = createFileRoute('/_course/concept/b1')({
   component: B1Page,
 })
 
-const idx = CONCEPTS.findIndex((c) => c.id === 'b1')
-const prev = idx > 0 ? CONCEPTS[idx - 1] : null
-const next = idx < CONCEPTS.length - 1 ? CONCEPTS[idx + 1] : null
+const { prev, next } = getNeighbors('b1')
 
 function B1Page() {
   return (
     <div className="max-w-3xl mx-auto px-8 py-10 pb-24">
       <header className="mb-8">
-        <p className="text-[11px] text-zinc-600 uppercase tracking-wider">Basics</p>
-        <h1 className="mt-1 text-2xl font-semibold text-zinc-100">LLM Mental Model</h1>
+        <p className="text-[11px] text-zinc-600 uppercase tracking-wider">{sectionLabel('foundations')}</p>
+        <h1 className="mt-1 text-2xl font-semibold text-zinc-100">How models work</h1>
       </header>
 
       <section className="space-y-4 text-[14px] leading-relaxed text-zinc-300">

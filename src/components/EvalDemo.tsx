@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { DEFAULT_EVAL_SET, scoreAnswer, type EvalResult } from '../services/eval'
 import { RagPipeline } from '../services/rag'
-import { loadSettings } from '../lib/storage'
+import { hasAnyApiKey } from '../lib/storage'
 
 const SAMPLE_DOC = `IRCTC Ticket Cancellation Policy
 
@@ -20,12 +20,12 @@ export function EvalDemo() {
   const [logLines, setLogLines] = useState<string[]>([])
   const [progress, setProgress] = useState(0)
 
-  const apiKey = loadSettings().apiKey
-  if (!apiKey) {
+  const hasKey = hasAnyApiKey()
+  if (!hasKey) {
     return (
       <div className="rounded-lg border border-red-500/30 bg-red-500/5 px-5 py-4 my-6">
         <p className="text-[13px] text-red-200">
-          No API key set. Add your OpenAI key in <a href="/settings" className="underline">Settings</a>.
+          Add an API key in <a href="/settings" className="underline">Settings</a>.
         </p>
       </div>
     )
