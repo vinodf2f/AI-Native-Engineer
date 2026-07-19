@@ -74,7 +74,7 @@ export const CONCEPTS: ConceptMeta[] = [
     title: 'Tool calling',
     section: 'building-blocks',
     status: 'not-started',
-    availability: 'soon',
+    availability: 'ready',
     blurb: 'Model picks a function your app runs',
   },
   {

@@ -152,7 +152,7 @@ function SidebarContent({
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
     words: true,
     foundations: true,
-    'building-blocks': true,
+    'building-blocks': true, // bb1 tool calling is ready
     agents: false,
     ship: false,
   })

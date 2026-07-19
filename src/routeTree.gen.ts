@@ -13,6 +13,7 @@ import { Route as CourseRouteImport } from './routes/_course'
 import { Route as CourseIndexRouteImport } from './routes/_course/index'
 import { Route as CourseWordsRouteImport } from './routes/_course/words'
 import { Route as CourseSettingsRouteImport } from './routes/_course/settings'
+import { Route as CourseConceptBb1RouteImport } from './routes/_course/concept/bb1'
 import { Route as CourseConceptB8RouteImport } from './routes/_course/concept/b8'
 import { Route as CourseConceptB7RouteImport } from './routes/_course/concept/b7'
 import { Route as CourseConceptB6RouteImport } from './routes/_course/concept/b6'
@@ -40,6 +41,11 @@ const CourseWordsRoute = CourseWordsRouteImport.update({
 const CourseSettingsRoute = CourseSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => CourseRoute,
+} as any)
+const CourseConceptBb1Route = CourseConceptBb1RouteImport.update({
+  id: '/concept/bb1',
+  path: '/concept/bb1',
   getParentRoute: () => CourseRoute,
 } as any)
 const CourseConceptB8Route = CourseConceptB8RouteImport.update({
@@ -101,6 +107,7 @@ export interface FileRoutesByFullPath {
   '/concept/b6': typeof CourseConceptB6Route
   '/concept/b7': typeof CourseConceptB7Route
   '/concept/b8': typeof CourseConceptB8Route
+  '/concept/bb1': typeof CourseConceptBb1Route
 }
 export interface FileRoutesByTo {
   '/settings': typeof CourseSettingsRoute
@@ -115,6 +122,7 @@ export interface FileRoutesByTo {
   '/concept/b6': typeof CourseConceptB6Route
   '/concept/b7': typeof CourseConceptB7Route
   '/concept/b8': typeof CourseConceptB8Route
+  '/concept/bb1': typeof CourseConceptBb1Route
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -131,6 +139,7 @@ export interface FileRoutesById {
   '/_course/concept/b6': typeof CourseConceptB6Route
   '/_course/concept/b7': typeof CourseConceptB7Route
   '/_course/concept/b8': typeof CourseConceptB8Route
+  '/_course/concept/bb1': typeof CourseConceptBb1Route
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -147,6 +156,7 @@ export interface FileRouteTypes {
     | '/concept/b6'
     | '/concept/b7'
     | '/concept/b8'
+    | '/concept/bb1'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/settings'
@@ -161,6 +171,7 @@ export interface FileRouteTypes {
     | '/concept/b6'
     | '/concept/b7'
     | '/concept/b8'
+    | '/concept/bb1'
   id:
     | '__root__'
     | '/_course'
@@ -176,6 +187,7 @@ export interface FileRouteTypes {
     | '/_course/concept/b6'
     | '/_course/concept/b7'
     | '/_course/concept/b8'
+    | '/_course/concept/bb1'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -210,6 +222,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof CourseSettingsRouteImport
+      parentRoute: typeof CourseRoute
+    }
+    '/_course/concept/bb1': {
+      id: '/_course/concept/bb1'
+      path: '/concept/bb1'
+      fullPath: '/concept/bb1'
+      preLoaderRoute: typeof CourseConceptBb1RouteImport
       parentRoute: typeof CourseRoute
     }
     '/_course/concept/b8': {
@@ -291,6 +310,7 @@ interface CourseRouteChildren {
   CourseConceptB6Route: typeof CourseConceptB6Route
   CourseConceptB7Route: typeof CourseConceptB7Route
   CourseConceptB8Route: typeof CourseConceptB8Route
+  CourseConceptBb1Route: typeof CourseConceptBb1Route
 }
 
 const CourseRouteChildren: CourseRouteChildren = {
@@ -306,6 +326,7 @@ const CourseRouteChildren: CourseRouteChildren = {
   CourseConceptB6Route: CourseConceptB6Route,
   CourseConceptB7Route: CourseConceptB7Route,
   CourseConceptB8Route: CourseConceptB8Route,
+  CourseConceptBb1Route: CourseConceptBb1Route,
 }
 
 const CourseRouteWithChildren =

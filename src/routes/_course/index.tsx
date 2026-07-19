@@ -24,9 +24,9 @@ const PATH = [
   },
   {
     name: 'Building blocks',
-    desc: 'Tools, JSON, keys, LangChain map.',
-    status: 'Next',
-    open: false,
+    desc: 'Tool calling open. More lessons next.',
+    status: 'Open',
+    open: true,
   },
   {
     name: 'Agents',
