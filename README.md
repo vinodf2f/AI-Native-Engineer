@@ -6,8 +6,8 @@ Interactive course for engineers who ship apps. You build the pieces yourself wi
 
 For product people, not model trainers.
 
-**Live:** [ai-concept-map-ten.vercel.app](https://ai-concept-map-ten.vercel.app)  
-**Repo:** [github.com/vinodf2f/ai-concept-map](https://github.com/vinodf2f/ai-concept-map)
+**Live:** [Fullstack-AI-Native-Engineer](https://fullstack-ai-native-engineer.vercel.app/)  
+**Repo:** [github.com/vinodf2f/ai-concept-map](https://github.com/vinodf2f/ai-native-engineer)
 
 ## Who it is for
 
