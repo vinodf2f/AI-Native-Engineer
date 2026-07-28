@@ -7,7 +7,7 @@ Interactive course for engineers who ship apps. You build the pieces yourself wi
 For product people, not model trainers.
 
 **Live:** [Fullstack-AI-Native-Engineer](https://fullstack-ai-native-engineer.vercel.app/)  
-**Repo:** [github.com/vinodf2f/ai-concept-map](https://github.com/vinodf2f/ai-native-engineer)
+**Repo:** [github.com/vinodf2f/ai-native-engineer](https://github.com/vinodf2f/ai-native-engineer)
 
 ## Who it is for
 
