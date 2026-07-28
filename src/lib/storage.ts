@@ -18,11 +18,15 @@ export type SectionId =
   | 'agents'
   | 'ship'
 
+export type ExampleLang = 'hinglish' | 'english'
+
 export type Settings = {
   openaiApiKey: string
   xaiApiKey: string
   /** Per-task provider + model (multi-step chains can mix). */
   models: Record<TaskKind, ModelRef>
+  /** Language for demo example messages (user presets). */
+  exampleLang: ExampleLang
 }
 
 const PROGRESS_KEY = 'ai-course:progress'
@@ -53,6 +57,7 @@ function emptySettings(): Settings {
     openaiApiKey: '',
     xaiApiKey: '',
     models: defaultModels(),
+    exampleLang: 'hinglish',
   }
 }
 
@@ -69,6 +74,7 @@ export function loadSettings(): Settings {
       const migrated: Settings = {
         openaiApiKey: parsed.apiKey,
         xaiApiKey: '',
+        exampleLang: 'hinglish',
         models: {
           ...defaultModels(),
           chat: { provider: 'openai', model: legacyModel },
@@ -83,6 +89,7 @@ export function loadSettings(): Settings {
     return {
       openaiApiKey: typeof parsed.openaiApiKey === 'string' ? parsed.openaiApiKey : '',
       xaiApiKey: typeof parsed.xaiApiKey === 'string' ? parsed.xaiApiKey : '',
+      exampleLang: parsed.exampleLang === 'english' ? 'english' : 'hinglish',
       models: {
         ...base.models,
         ...(parsed.models && typeof parsed.models === 'object'

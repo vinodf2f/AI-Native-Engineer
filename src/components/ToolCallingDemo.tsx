@@ -1,22 +1,14 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { hasAnyApiKey } from '../lib/storage'
+import { useExampleLang, EXAMPLES } from '../lib/exampleTexts'
 import { createToolCompletion } from '../services/openai'
 import { QUICKBITE_TOOLS, type ToolRunLog, type ToolCallRequest } from '../services/tools'
 
-const PRESETS = [
-  {
-    label: 'Wrong item + refund?',
-    text: 'Bhai order QB-8821 pe wrong burger aaya. Refund milega kya? Policy kya hai?',
-  },
-  {
-    label: 'Where is my order?',
-    text: 'QB-1102 kab tak aayega? Status batao.',
-  },
-  {
-    label: 'Just say hi (no tool)',
-    text: 'Hi, kaise ho?',
-  },
+const PRESET_DEFS = [
+  { label: 'Wrong item + refund?', key: 'wrongItemRefund' as const },
+  { label: 'Where is my order?', key: 'orderStatus' as const },
+  { label: 'Just say hi (no tool)', key: 'greeting' as const },
 ]
 
 type StepView =
@@ -26,6 +18,8 @@ type StepView =
   | { type: 'assistant_text'; content: string; finishReason: string }
 
 export function ToolCallingDemo() {
+  const lang = useExampleLang()
+  const PRESETS = PRESET_DEFS.map((p) => ({ label: p.label, text: EXAMPLES.tools[p.key][lang] }))
   const [userText, setUserText] = useState(PRESETS[0].text)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)

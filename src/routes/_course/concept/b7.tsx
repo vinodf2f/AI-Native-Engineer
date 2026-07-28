@@ -4,6 +4,7 @@ import { EvalDemo } from '../../../components/EvalDemo'
 import { UnderTheHood } from '../../../components/UnderTheHood'
 import { Quiz } from '../../../components/Quiz'
 import { ConceptNav } from '../../../components/ConceptNav'
+import { LessonRef } from '../../../components/LessonRef'
 import { getNeighbors, sectionLabel } from '../../../lib/concepts'
 import { setStatus } from '../../../lib/storage'
 
@@ -39,7 +40,7 @@ function B7Page() {
 
         <h3 className="text-[15px] font-semibold text-zinc-200 mt-4">2. Semantic score (the smart one)</h3>
         <p>
-          Embed both the actual and expected answers; compute cosine similarity. If they're above 0.5, the answers are meaningfully similar even if worded differently. This catches "the model said the same thing but in different words"   keyword-only scoring would mark that as a fail. (Uses B2's cosine, B3's embedding call.)
+          Embed both the actual and expected answers; compute cosine similarity. If they're above 0.5, the answers are meaningfully similar even if worded differently. This catches "the model said the same thing but in different words"   keyword-only scoring would mark that as a fail. (Uses cosine similarity from <LessonRef id="b2" /> and the embedding call from <LessonRef id="b3" />.)
         </p>
 
         <p className="text-[13px] text-zinc-500">In production you'd also add <strong>faithfulness</strong> (is every claim in the answer supported by retrieved chunks?) and <strong>context recall</strong> (did retrieval surface the right chunks?). Those need an LLM-as-judge. This course sticks to keyword + semantic   they're 80% of the value with 20% of the effort.</p>
@@ -102,7 +103,9 @@ function B7Page() {
               'The answer has 78 tokens',
             ],
             answer: 1,
-            explanation: 'It\'s just a cosine number   same one you computed in B2. The interpretation "meaningfully similar" comes from your threshold (we use 0.5). Above 0.5 = pass; below = the answers differ in meaning. The number isn\'t an accuracy percentage   it\'s a vector-space proximity score.',
+            explanation: (
+              <>It's just a cosine number — the same one you computed in <LessonRef id="b2" />. The interpretation "meaningfully similar" comes from your threshold (we use 0.5). Above 0.5 = pass; below = the answers differ in meaning. The number isn't an accuracy percentage — it's a vector-space proximity score.</>
+            ),
           },
           {
             prompt: 'Which of these belongs in a serious eval set?',

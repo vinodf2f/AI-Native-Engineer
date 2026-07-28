@@ -85,6 +85,19 @@ export const QUICKBITE_TOOLS: ToolDef[] = [
       required: ['order_id', 'amount_inr', 'reason'],
     },
   },
+  {
+    name: 'escalate_to_human',
+    description:
+      'Hand the conversation to a human support agent. Use when the issue is outside policy, a refund is blocked, or the customer asks for a human.',
+    parameters: {
+      type: 'object',
+      properties: {
+        reason: { type: 'string', description: 'Why this needs a human' },
+        priority: { type: 'string', description: 'One of: normal, high' },
+      },
+      required: ['reason'],
+    },
+  },
 ]
 
 export function toApiTools(defs: ToolDef[] = QUICKBITE_TOOLS): ApiTool[] {
@@ -199,6 +212,16 @@ export function executeTool(name: string, argsJson: string): unknown {
       reason,
       status: 'queued',
       eta: '3–5 working days to original payment method',
+    }
+  }
+
+  if (name === 'escalate_to_human') {
+    return {
+      ok: true,
+      ticket_id: `HUMAN-${Date.now().toString().slice(-5)}`,
+      priority: String(args.priority ?? 'normal'),
+      note: String(args.reason ?? ''),
+      eta: 'A human agent joins within 10 minutes (mock)',
     }
   }
 

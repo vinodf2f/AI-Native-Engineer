@@ -50,7 +50,7 @@ export type ToolRoundTrip = {
   usedTools: boolean
 }
 
-async function postChat(body: Record<string, unknown>, task: 'chat' | 'tools' = 'chat') {
+export async function postChat(body: Record<string, unknown>, task: 'chat' | 'tools' = 'chat') {
   const settings = loadSettings()
   const resolved = resolveTask(task, settings)
   const model = (body.model as string | undefined) ?? resolved.model
@@ -97,6 +97,38 @@ async function postChat(body: Record<string, unknown>, task: 'chat' | 'tools' = 
     completionTokens: usage.completion_tokens as number,
     totalTokens: (usage.total_tokens as number) ?? 0,
     cost,
+  }
+}
+
+/**
+ * Call chat completions with a `response_format` (e.g. JSON mode or structured outputs).
+ * Shares the same auth/fetch/cost logic as the other helpers.
+ */
+export async function createStructuredCompletion(
+  messages: ChatMessage[],
+  responseFormat: Record<string, unknown>,
+  model?: string,
+  task: 'chat' | 'tools' = 'chat',
+): Promise<ChatCompletion> {
+  const {
+    data,
+    model: resolvedModel,
+    provider,
+    promptTokens,
+    completionTokens,
+    totalTokens,
+    cost,
+  } = await postChat({ model, messages, response_format: responseFormat }, task)
+
+  return {
+    content: data.choices[0].message.content ?? '',
+    promptTokens,
+    completionTokens,
+    totalTokens,
+    cost,
+    model: resolvedModel,
+    provider,
+    finishReason: data.choices[0].finish_reason,
   }
 }
 

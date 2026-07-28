@@ -29,6 +29,7 @@ function SettingsPage() {
       openaiApiKey: form.openaiApiKey.trim(),
       xaiApiKey: form.xaiApiKey.trim(),
       models: form.models,
+      exampleLang: form.exampleLang,
     })
     setSaved(true)
     setTimeout(() => setSaved(false), 1500)
@@ -109,6 +110,28 @@ function SettingsPage() {
           Keys go only to the matching API (OpenAI or xAI) from your browser. Fine for learning.
           Real products put a backend in front so keys never sit in the client.
         </p>
+      </div>
+
+      {/* Example language */}
+      <h2 className="text-[13px] font-semibold text-zinc-200 mb-1">Example language</h2>
+      <p className="text-[12px] text-zinc-500 mb-3 leading-relaxed">
+        Language for the demo user messages across the whole course.
+      </p>
+      <div className="flex gap-1.5 mb-10">
+        {(['hinglish', 'english'] as const).map((l) => (
+          <button
+            key={l}
+            type="button"
+            onClick={() => setForm((f) => ({ ...f, exampleLang: l }))}
+            className={`rounded border px-3 py-1.5 text-[12px] transition-colors ${
+              form.exampleLang === l
+                ? 'border-emerald-600 bg-emerald-600/10 text-emerald-300'
+                : 'border-zinc-700 text-zinc-400 hover:border-zinc-500 hover:text-zinc-200'
+            }`}
+          >
+            {l === 'hinglish' ? 'Hinglish — "refund milega kya?"' : 'English — "can I get a refund?"'}
+          </button>
+        ))}
       </div>
 
       {/* Per-task models */}

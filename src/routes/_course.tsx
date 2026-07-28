@@ -130,6 +130,23 @@ function CourseLayout() {
   )
 }
 
+function initialOpenGroups(progress: Record<string, ConceptStatus>): Record<string, boolean> {
+  // Open the group holding the first incomplete ready lesson (the learner's
+  // current frontier); collapse sections already finished. Falls back to the
+  // last group when everything ready is complete.
+  const frontier = CONCEPT_GROUPS.find(
+    (g) =>
+      g.id !== 'words' &&
+      g.items.some((c) => c.availability === 'ready' && progress[c.id] !== 'complete'),
+  )
+  const open: Record<string, boolean> = { words: true }
+  for (const g of CONCEPT_GROUPS) {
+    if (g.id === 'words') continue
+    open[g.id] = frontier ? g.id === frontier.id : g.id === 'ship'
+  }
+  return open
+}
+
 function SidebarContent({
   done,
   total,
@@ -149,13 +166,14 @@ function SidebarContent({
   onToggleTheme: () => void
   onClose?: () => void
 }) {
-  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
-    words: true,
-    foundations: true,
-    'building-blocks': true, // bb1 tool calling is ready
-    agents: false,
-    ship: false,
-  })
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() => initialOpenGroups(progress))
+
+  // Re-evaluate frontier when progress changes (e.g. quiz completes a lesson),
+  // keeping any manual toggle state so the user's explicit open/close survives.
+  useEffect(() => {
+    if (done === total && total > 0) return // all done — leave as-is
+    setOpenGroups((prev) => ({ ...prev, ...initialOpenGroups(progress) }))
+  }, [progress, done, total])
 
   function toggleGroup(id: string) {
     setOpenGroups((g) => ({ ...g, [id]: !g[id] }))

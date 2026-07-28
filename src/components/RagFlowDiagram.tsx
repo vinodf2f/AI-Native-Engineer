@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from '../lib/theme'
+import { LessonRef } from './LessonRef'
 
 type Stage = 'query' | 'embed' | 'search' | 'rank' | 'result'
 
@@ -44,7 +45,7 @@ const STAGES: { key: Stage; label: string; sub: string }[] = [
   { key: 'embed', label: '2. Embed query', sub: 'API call: OpenAI /v1/embeddings → 1536-dim vector' },
   { key: 'search', label: '3. Cosine vs every chunk', sub: 'Compare query vector with each stored chunk' },
   { key: 'rank', label: '4. Sort by score', sub: 'Highest cosine = most semantically similar' },
-  { key: 'result', label: '5. Return top-k', sub: 'Send ranked text chunks to LLM (next: B4)' },
+  { key: 'result', label: '5. Return top-k', sub: 'Send ranked text chunks to LLM (next: RAG lesson)' },
 ]
 
 export function RagFlowDiagram() {
@@ -224,7 +225,7 @@ export function RagFlowDiagram() {
               animate={{ opacity: 1 }}
               className="rounded border border-emerald-500/40 bg-emerald-500/10 px-3 py-2 text-[11px] text-emerald-300 light:bg-emerald-50 light:border-emerald-600 light:text-emerald-800"
             >
-              → These top-3 chunks get sent to the LLM as context. B4 covers how that answer is generated.
+              → These top-3 chunks get sent to the LLM as context. <LessonRef id="b4">The RAG lesson</LessonRef> covers how that answer is generated.
             </motion.div>
           )}
         </div>

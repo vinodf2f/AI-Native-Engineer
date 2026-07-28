@@ -95,20 +95,21 @@ What most product engineers actually ship.
 
 | ID | Lesson | Status |
 |----|--------|--------|
-| bb1 | Tool calling (model picks a function) | soon |
-| bb2 | Structured JSON you can trust | soon |
-| bb3 | Chat memory (multi-turn) | soon |
-| bb4 | Keys, proxy, cost (how real apps wire AI) | soon |
-| bb5 | LangChain without the magic | soon |
+| bb1 | Tool calling (model picks a function) | ready |
+| bb2 | Structured JSON you can trust | ready |
+| bb3 | Chat memory (multi-turn) | ready |
+| bb4 | Keys, proxy, cost (how real apps wire AI) | ready |
+| bb5 | LangChain without the magic | ready |
 
 ### 3. Agents (when one call is not enough)
 
 | ID | Lesson | Status |
 |----|--------|--------|
-| a1 | What an agent actually is | soon |
-| a2 | Build a small agent by hand | soon |
-| a3 | LangGraph ideas (state, steps, loops) | soon |
-| a4 | QuickBite support agent | soon |
+| a1 | What an agent actually is | ready |
+| a2 | Build a small agent by hand | ready |
+| a3 | Read agents in any codebase (LangGraph ideas) | ready |
+| a4 | QuickBite support agent | ready |
+| bb6 | LangGraph without the magic (after a4) | ready |
 
 ### 4. Ship it (make it safe enough for users)
 
