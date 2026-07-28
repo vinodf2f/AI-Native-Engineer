@@ -19,26 +19,18 @@ const PATH = [
   {
     name: 'Foundations',
     desc: 'Models, search, RAG, prompts, streaming, tests.',
-    status: 'Open',
-    open: true,
   },
   {
     name: 'Building blocks',
-    desc: 'Tool calling open. More lessons next.',
-    status: 'Open',
-    open: true,
+    desc: 'Tools, structured JSON, memory, keys, LangChain.',
   },
   {
     name: 'Agents',
     desc: 'Multi step when one call is not enough.',
-    status: 'Later',
-    open: false,
   },
   {
     name: 'Ship it',
     desc: 'Evals, cost, fit in your app.',
-    status: 'Later',
-    open: false,
   },
 ]
 
@@ -121,7 +113,7 @@ function HomePage() {
       >
         <h2 className="text-sm font-semibold text-zinc-100 mb-1">The path</h2>
         <p className="text-[12px] text-zinc-500 mb-4">
-          Full list is in the sidebar. Foundations is open now.
+          Full list is in the sidebar.
         </p>
         <div className="grid grid-cols-2 gap-2">
           {PATH.map((row, i) => (
@@ -130,24 +122,11 @@ function HomePage() {
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.08 + i * 0.03 }}
-              className={`rounded-xl border px-3 py-3 min-h-[5.5rem] flex flex-col ${
-                row.open
-                  ? 'border-emerald-500/35 bg-emerald-500/[0.07]'
-                  : 'border-zinc-800 bg-zinc-900/35'
-              }`}
+              className="rounded-xl border border-zinc-800 bg-zinc-900/35 px-3 py-3 min-h-[5.5rem] flex flex-col"
             >
-              <div className="flex items-start justify-between gap-1 mb-1">
-                <span className="text-[13px] font-semibold text-zinc-100 leading-snug">
-                  {row.name}
-                </span>
-                <span
-                  className={`text-[9px] uppercase tracking-wide shrink-0 mt-0.5 ${
-                    row.open ? 'text-emerald-400' : 'text-zinc-600'
-                  }`}
-                >
-                  {row.status}
-                </span>
-              </div>
+              <span className="text-[13px] font-semibold text-zinc-100 leading-snug mb-1">
+                {row.name}
+              </span>
               <p className="text-[11px] text-zinc-500 leading-snug mt-auto">{row.desc}</p>
             </motion.div>
           ))}
