@@ -7,7 +7,7 @@ const THEME_KEY = 'ai-course:theme'
 export function getStoredTheme(): Theme {
   const t = localStorage.getItem(THEME_KEY)
   if (t === 'light' || t === 'dark') return t
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  return 'dark' // default theme; user's explicit toggle still wins via storage
 }
 
 export function storeTheme(t: Theme) {
