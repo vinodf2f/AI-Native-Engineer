@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -6,7 +6,7 @@ export type QuizQuestion = {
   prompt: string
   options: string[]
   answer: number
-  explanation?: string
+  explanation?: ReactNode
 }
 
 export function Quiz({

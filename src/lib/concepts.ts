@@ -82,7 +82,7 @@ export const CONCEPTS: ConceptMeta[] = [
     title: 'Structured JSON you can trust',
     section: 'building-blocks',
     status: 'not-started',
-    availability: 'soon',
+    availability: 'ready',
     blurb: 'Schema, validate, retry on bad output',
   },
   {
@@ -90,7 +90,7 @@ export const CONCEPTS: ConceptMeta[] = [
     title: 'Chat memory',
     section: 'building-blocks',
     status: 'not-started',
-    availability: 'soon',
+    availability: 'ready',
     blurb: 'Multi-turn history without blowing context',
   },
   {
@@ -98,7 +98,7 @@ export const CONCEPTS: ConceptMeta[] = [
     title: 'Keys, proxy, cost',
     section: 'building-blocks',
     status: 'not-started',
-    availability: 'soon',
+    availability: 'ready',
     blurb: 'How real apps wire AI safely',
   },
   {
@@ -106,7 +106,7 @@ export const CONCEPTS: ConceptMeta[] = [
     title: 'LangChain without the magic',
     section: 'building-blocks',
     status: 'not-started',
-    availability: 'soon',
+    availability: 'ready',
     blurb: 'Map your hand-built RAG to the library',
   },
 
@@ -116,7 +116,7 @@ export const CONCEPTS: ConceptMeta[] = [
     title: 'What an agent actually is',
     section: 'agents',
     status: 'not-started',
-    availability: 'soon',
+    availability: 'ready',
     blurb: 'Loop + tools + stop condition',
   },
   {
@@ -124,24 +124,32 @@ export const CONCEPTS: ConceptMeta[] = [
     title: 'Build a small agent by hand',
     section: 'agents',
     status: 'not-started',
-    availability: 'soon',
+    availability: 'ready',
     blurb: 'Think → call tool → observe, in plain TS',
   },
   {
     id: 'a3',
-    title: 'LangGraph ideas',
+    title: 'Read agents in any codebase',
     section: 'agents',
     status: 'not-started',
-    availability: 'soon',
-    blurb: 'State, steps, branches, loops',
+    availability: 'ready',
+    blurb: 'LangGraph ideas: state, steps, branches, loops',
   },
   {
     id: 'a4',
     title: 'QuickBite support agent',
     section: 'agents',
     status: 'not-started',
-    availability: 'soon',
-    blurb: 'Policy + tools + handoff to human',
+    availability: 'ready',
+    blurb: 'Policy + tools + guardrails + handoff to human',
+  },
+  {
+    id: 'bb6',
+    title: 'LangGraph without the magic',
+    section: 'agents',
+    status: 'not-started',
+    availability: 'ready',
+    blurb: 'Checkpointing, human-in-the-loop, when to adopt',
   },
 
   // Ship it

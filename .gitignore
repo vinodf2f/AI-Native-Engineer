@@ -25,3 +25,8 @@ dist-ssr
 
 # tanstack router generated
 .tanstack
+
+# opencode local config
+AGENTS.md
+opencode.json
+COURSE_PLAN.md

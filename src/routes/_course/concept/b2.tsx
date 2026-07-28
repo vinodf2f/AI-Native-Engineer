@@ -5,6 +5,7 @@ import { EmbeddingDemo } from '../../../components/EmbeddingDemo'
 import { UnderTheHood } from '../../../components/UnderTheHood'
 import { Quiz } from '../../../components/Quiz'
 import { ConceptNav } from '../../../components/ConceptNav'
+import { LessonRef } from '../../../components/LessonRef'
 import { getNeighbors, sectionLabel } from '../../../lib/concepts'
 import { setStatus } from '../../../lib/storage'
 
@@ -53,7 +54,7 @@ function B2Page() {
 
         <h2 className="text-lg font-semibold text-zinc-100 mt-8">Why this is the foundation of RAG</h2>
         <p>
-          If every chunk of your documents has an embedding, and the user's question also gets an embedding, then <strong>finding the relevant chunks = finding nearest neighbors in vector space</strong>. That's retrieval. Everything in B3-B4 builds on this single idea.
+          If every chunk of your documents has an embedding, and the user's question also gets an embedding, then <strong>finding the relevant chunks = finding nearest neighbors in vector space</strong>. That's retrieval. Everything in <LessonRef id="b3" /> and <LessonRef id="b4" /> builds on this single idea.
         </p>
 
         <Callout title="Relatable analogy: IRCTC search">
